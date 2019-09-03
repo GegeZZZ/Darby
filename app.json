@@ -1,0 +1,17 @@
+{
+  "name": "DARBY CHARLESWORTH THE SECOND",
+  "description": "Darby is everything you wish you were, and more",
+  "repository": "https://github.com/AsherWright/Darby",
+  "success_url": "/",
+  "env": {
+    "HEROKU_APP_NAME": {
+      "required": true
+    },
+    "BOT_USER_TOKEN": {
+      "description": "token for the bot to authenticate with Slack",
+      "required": true
+    },
+    "NODE_ENV": "staging"
+  },
+  "image": "heroku/nodejs"
+}

@@ -1,0 +1,35 @@
+{
+  "name": "darby",
+  "description": "Darby is everything you wish you were, and more.",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node ./src",
+    "test": "standard"
+  },
+  "author": {
+    "email": "asherw@mit.edu",
+    "name": "Asher Wright"
+  },
+  "bugs": {
+    "url": "https://github.com/AsherWright"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "dotenv": "^2.0.0",
+    "express": "^4.13.4",
+    "express-http-proxy": "^0.6.0",
+    "lodash": "^4.6.1",
+    "slack": "^6.1.0"
+  },
+  "keywords": [
+    "slack",
+    "slack-bot",
+    "bot",
+    "heroku"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": "5.7.1"
+  }
+}
