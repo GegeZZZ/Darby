@@ -10,10 +10,10 @@ const send_message = (text, channel) => {
     icon_emoji: config('ICON_EMOJI'),
     channel: channel,
     text: text
-  }, (err, data) => {
+  }, (err) => {
     if (err) throw err
 
-    console.log(`I sent the message "${data.message.text}" to the channel "${data.message.channel}"`)
+    console.log(`I sent the message "${text}" to the channel "${channel}"`)
   })
 }
 
