@@ -26,7 +26,7 @@ const RESPONSES_TO_CAPS = JSON.parse(fs.readFileSync(RESPONSES_TO_CAPS_PATH)).re
 
 const respond_to_event = (event) => {
   const message = event.text
-    
+  
   if (event.bot_id == null && message === message.toUpperCase()) {
     send_message(_.sample(RESPONSES_TO_CAPS), event.channel)
   }

@@ -5,7 +5,6 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const proxy = require('express-http-proxy')
 const config = require('./config')
-const request = require('request')
 
 let bot = require('./bot')
 let app = express()
