@@ -24,10 +24,12 @@ app.get('/', (req, res) => { res.send('\n Nothing to see here, folks. \n') })
 app.post('/listeners/messages', (req, res) => {
   let payload = req.body
 
-  const message = payload.event.text
-  
-  if (payload.event.bot_id == null && message === message.toUpperCase()) {
-    bot.send_message('I HEAR YOU', payload.event.channel)
+  if (payload.event) {
+    const message = payload.event.text
+    
+    if (payload.event.bot_id == null && message === message.toUpperCase()) {
+      bot.send_message('I HEAR YOU', payload.event.channel)
+    }
   }
 
   res.status(200).send({challenge: payload.challenge})
