@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 app.get('/', (req, res) => { res.send('\n Nothing to see here, folks. \n') })
 
-app.post('/listeners/test', (req, res) => {
+app.post('/listeners/messages', (req, res) => {
   let payload = req.body
 
   const message = payload.event.text
