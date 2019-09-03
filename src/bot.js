@@ -17,4 +17,12 @@ const send_message = (text, channel) => {
   })
 }
 
-module.exports = {send_message: send_message}
+const respond_to_event = (event) => {
+  const message = event.text
+    
+  if (event.bot_id == null && message === message.toUpperCase()) {
+    send_message('I HEAR YOU', event.channel)
+  }
+}
+
+module.exports = {send_message: send_message, respond_to_event: respond_to_event}

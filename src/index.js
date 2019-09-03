@@ -25,11 +25,7 @@ app.post('/listeners/messages', (req, res) => {
   let payload = req.body
 
   if (payload.event) {
-    const message = payload.event.text
-    
-    if (payload.event.bot_id == null && message === message.toUpperCase()) {
-      bot.send_message('I HEAR YOU', payload.event.channel)
-    }
+    bot.respond_to_event(payload.event)
   }
 
   res.status(200).send({challenge: payload.challenge})
