@@ -11,7 +11,7 @@
       "description": "token for the bot to authenticate with Slack",
       "required": true
     },
-    "NODE_ENV": "staging",
+    "NODE_ENV": "staging"
   },
   "image": "heroku/nodejs"
 }

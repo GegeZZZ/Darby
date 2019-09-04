@@ -31,6 +31,6 @@
   ],
   "license": "MIT",
   "engines": {
-    "node": "5.7.1"
+    "node": "12.9.1"
   }
 }
