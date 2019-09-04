@@ -2,5 +2,10 @@
     "description": "What Darby will reply if a user loses some precious points",
     "user_replacement_string": "[user]",
     "points_replacement_string": "[points]",
-    "responses": ["<@[user]> has just lost some points! What happened? Now at [points] points."]
+    "responses": [
+        "<@[user]> has just lost some points! :chart_with_downwards_trend: What happened? Now at [points] points",
+        "Looks like <@[user]> doesn't care much about points... Now at [points] points :cry:",
+        "Are points out of season these days? <@[user]> now only has [points] of them",
+        "Yikes. <@[user]> is losing points. Down to [points] points :face_palm:"
+    ]
 }

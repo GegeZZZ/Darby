@@ -2,5 +2,10 @@
     "description": "What Darby will reply if a user gets some sweet points",
     "user_replacement_string": "[user]",
     "points_replacement_string": "[points]",
-    "responses": ["<@[user]> just got some sweet points! Now at [points] points."]
+    "responses": [
+        "<@[user]> just got some sweet points! :tada: Now at [points] points",
+        "Congrats on the point <@[user]>! :smiley: I've made sure to record this in my book. You have [points] total",
+        "Hooray! <@[user]> just did something good :white_check_mark: and got a point. They're now at [points] points",
+        "Whether justified or not :thinking_face:, <@[user]> just received a point, which brings their total to... [points]"
+    ]
 }

@@ -32,12 +32,13 @@ const GIVE_POINTS_REGEX = /(\+\+|--)\s*<@(.*)>/
 const respond_to_event = (event) => {
   const message = event.text
   console.log(`Message looks like: ${message}`)
+
+  const pointRegexMatch = event.text.match(GIVE_POINTS_REGEX)
   
-  if (event.bot_id == null && message === message.toUpperCase()) {
+  if (event.bot_id == null && message === message.toUpperCase() && !pointRegexMatch) {
     send_message(_.sample(RESPONSES_TO_CAPS.responses), event.channel)
   }
 
-  const pointRegexMatch = event.text.match(GIVE_POINTS_REGEX)
   if (event.bot_id == null && pointRegexMatch) {
 
     // match: [full string, -- or ++, userID]
