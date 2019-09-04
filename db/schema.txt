@@ -1,0 +1,11 @@
+# Rough estimate of schema right now:
+
+CREATE DATABASE IF NOT EXISTS darby_db;
+USE darby_db;
+
+CREATE TABLE points (
+id NOT NULL AUTO_INCREMENT,
+user_id int NOT NULL,
+point_count int,
+PRIMARY KEY (id)
+);

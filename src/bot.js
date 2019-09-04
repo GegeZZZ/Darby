@@ -6,6 +6,7 @@ const slack = require('slack')
 const _ = require('lodash')
 const fs = require('fs')
 const config = require('./config')
+const darbyDb = require('./darby_db')
 
 const send_message = (text, channel) => {
   slack.chat.postMessage({
@@ -24,9 +25,9 @@ const send_message = (text, channel) => {
 const RESPONSES_TO_CAPS_PATH = path.join('src', 'data', 'responses_to_caps.JSON');
 const RESPONSES_TO_CAPS = JSON.parse(fs.readFileSync(RESPONSES_TO_CAPS_PATH)).responses
 
-const GIVE_POINTS_REGEX = /\+\+\s*<@(.*)>/
+const GIVE_POINTS_REGEX = /(\+\+|--)\s*<@(.*)>/
 
-const respond_to_event = (event, storage) => {
+const respond_to_event = (event) => {
   const message = event.text
   console.log(`Message looks like: ${message}`)
   
@@ -34,22 +35,24 @@ const respond_to_event = (event, storage) => {
     send_message(_.sample(RESPONSES_TO_CAPS), event.channel)
   }
 
-  if (event.bot_id == null && GIVE_POINTS_REGEX.test(message)) {
-    const name = 'jjjj'
-    console.log(`Store is ${storage}`)
+  const pointRegexMatch = event.text.match(GIVE_POINTS_REGEX)
+  if (event.bot_id == null && pointRegexMatch) {
 
-    storage.getItem(name).then((result) => {
-      console.log(`Result is ${result}`)
-      if (result !== undefined && result >= 0) {
-        const newResult = result + 1
+    // match: [full string, -- or ++, userID]
+    const action = pointRegexMatch[1]
+    const userId = pointRegexMatch[2]
 
-        storage.setItem(name, newResult).then(() => {
-          console.log(`Points: incremented ${name} to ${newResult}`)
+    const valueToAdd = action === '++' ? 1 : -1
+
+    darbyDb.userExists(userId, (userExists) => {
+      if (userExists) {
+        darbyDb.getUserPoints(userId, (currPoints) => {
+          if (currPoints !== -1) {
+            darbyDb.setUserPoints(userId, currPoints + valueToAdd)
+          }
         })
-      }else{
-        storage.setItem(name, 0).then(() => {
-          console.log(`Points: added new key ${name}`)
-        })
+      } else {
+        darbyDb.addUser(userId)
       }
     })
   }
