@@ -3,9 +3,9 @@
     "user_replacement_string": "[user]",
     "points_replacement_string": "[points]",
     "responses": [
-        "<@[user]> has just lost some points! :chart_with_downwards_trend: What happened? Now at [points] points",
-        "Looks like <@[user]> doesn't care much about points... Now at [points] points :cry:",
-        "Are points out of season these days? <@[user]> now only has [points] of them",
-        "Yikes. <@[user]> is losing points. Down to [points] points :face_palm:"
+        "<@[user]> HAS JUST LOST SOME POINTS! :chart_with_downwards_trend: WHAT HAPPENED? NOW AT [points] POINTS",
+        "LOOKS LIKE <@[user]> DOESN'T CARE MUCH ABOUT POINTS... NOW AT [points] POINTS :cry:",
+        "ARE POINTS OUT OF SEASON THESE DAYS? <@[user]> NOW ONLY HAS [points] OF THEM",
+        "YIKES. <@[user]> IS LOSING POINTS. DOWN TO [points] POINTS :face_palm:"
     ]
 }
