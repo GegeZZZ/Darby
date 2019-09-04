@@ -26,7 +26,7 @@ const RESPONSES_TO_CAPS = JSON.parse(fs.readFileSync(RESPONSES_TO_CAPS_PATH)).re
 
 const GIVE_POINTS_REGEX = /\+\+\s*<@(.*)>/
 
-const respond_to_event = (event, redis_client) => {
+const respond_to_event = (event, datastore) => {
   const message = event.text
   console.log(`Message looks like: ${message}`)
   
@@ -35,21 +35,18 @@ const respond_to_event = (event, redis_client) => {
   }
 
   if (event.bot_id == null && GIVE_POINTS_REGEX.test(message)) {
-    const name = 'ddd'
+    const name = 'eee'
 
-    redis_client.exists(name, function (error, exists) {
-      if (exists){
-        redis_client.get(name, function (error, result) {
-          const newResult = parseInt(result) + 1
-  
-          redis_client.set(name, newResult)
-          console.log(`Redis: incremented ${name} to ${newResult}`)
-        })
-      } else {
-        redis_client.set(name, 0);
-        console.log(`Redis: added new key ${name}`)
-      }
-    })
+    if(datastore.has(name)){
+      const currVal = datastore.get(name)
+      const newResult = currVal + 1
+
+      datastore.set(name, newResult)
+      console.log(`Points: incremented ${name} to ${newResult}`)
+    } else {
+      datastore.set(name, 0);
+      console.log(`Points: added new key ${name}`)
+    }
   }
 }
 

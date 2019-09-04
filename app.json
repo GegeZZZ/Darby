@@ -12,10 +12,6 @@
       "required": true
     },
     "NODE_ENV": "staging",
-    "REDIS_URL": {
-      "description": "url to connect to redis server",
-      "required": true
-    }
   },
   "image": "heroku/nodejs"
 }

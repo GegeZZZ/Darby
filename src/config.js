@@ -12,7 +12,6 @@ const config = {
   PROXY_URI: process.env.PROXY_URI,
   WEBHOOK_URL: process.env.WEBHOOK_URL,
   BOT_USER_TOKEN: process.env.BOT_USER_TOKEN,
-  REDIS_URL: process.env.REDIS_URL
 }
 
 module.exports = (key) => {

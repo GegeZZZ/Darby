@@ -16,11 +16,11 @@
   },
   "dependencies": {
     "body-parser": "^1.15.0",
+    "data-store": "^3.1.0",
     "dotenv": "^2.0.0",
     "express": "^4.13.4",
     "express-http-proxy": "^0.6.0",
     "lodash": "^4.6.1",
-    "redis": "^2.8.0",
     "slack": "^6.1.0"
   },
   "keywords": [
