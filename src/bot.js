@@ -25,6 +25,9 @@ const send_message = (text, channel) => {
 const RESPONSES_TO_CAPS_PATH = path.join('src', 'data', 'responses_to_caps.JSON');
 const RESPONSES_TO_CAPS = JSON.parse(fs.readFileSync(RESPONSES_TO_CAPS_PATH)).responses
 
+const RESPONSES_TO_NEW_USER_PATH = path.join('src', 'data', 'responses_to_new_user.JSON');
+const RESPONSES_TO_NEW_USER_JSON = JSON.parse(fs.readFileSync(RESPONSES_TO_NEW_USER_PATH))
+
 const GIVE_POINTS_REGEX = /(\+\+|--)\s*<@(.*)>/
 
 const respond_to_event = (event) => {
@@ -48,11 +51,19 @@ const respond_to_event = (event) => {
       if (userExists) {
         darbyDb.getUserPoints(userId, (currPoints) => {
           if (currPoints !== -1) {
-            darbyDb.setUserPoints(userId, currPoints + valueToAdd)
+            darbyDb.setUserPoints(userId, currPoints + valueToAdd, (success, points) => {
+
+            })
           }
         })
       } else {
-        darbyDb.addUser(userId)
+        darbyDb.addUser(userId, (success) => {
+          if (success) {
+            send_message(
+              _.sample(RESPONSES_TO_NEW_USER_JSON.responses).replace(
+                RESPONSES_TO_NEW_USER_JSON.userid_replacement_string, userId), event.channel)
+          }
+        })
       }
     })
   }

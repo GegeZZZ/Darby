@@ -8,7 +8,7 @@ const darbyDb = mysql.createConnection(process.env.JAWSDB_URL);
 darbyDb.connect();
 
 const userExists = (userId, callback) => {
-    const testQuery = darbyDb.query('SELECT * FROM `user_points` WHERE `user_id` = ?;',
+    darbyDb.query('SELECT * FROM `user_points` WHERE `user_id` = ?;',
         [userId],
         function(err, res) {
             console.log('this.sql', this.sql);
@@ -20,10 +20,6 @@ const userExists = (userId, callback) => {
             return callback(res.length > 0);
         }
     );
-
-    console.log('LOGGING TEST QUERY')
-    console.log(testQuery)
-    console.log('DONE LOGGING TEST QUERY')
 }
 
 const getUserPoints = (userId, callback) => {
@@ -57,7 +53,7 @@ const setUserPoints = (userId, points) => {
     );
 }
 
-const addUser = (userId) => {
+const addUser = (userId, callback) => {
     darbyDb.query('INSERT INTO `user_points` (`user_id`, `points`) VALUES (?, ?);',
         [userId, 0],
         function(err, res) {
@@ -65,10 +61,11 @@ const addUser = (userId) => {
 
             if (err) {
                 console.log(`Unable to add user ${userId} (error: ${err})`)
-                return;
+                callback(false)
             }
 
             console.log(`Successfully added user ${userId}`)
+            callback(true)
         }
     );
 }
