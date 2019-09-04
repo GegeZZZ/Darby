@@ -1,0 +1,6 @@
+{
+    "description": "What Darby will reply if a user gets some sweet points",
+    "user_replacement_string": "[user]",
+    "points_replacement_string": "[points]",
+    "responses": ["<@[user]> just got some sweet points! Now at [points] points."]
+}

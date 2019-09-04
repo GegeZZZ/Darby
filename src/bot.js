@@ -22,11 +22,10 @@ const send_message = (text, channel) => {
 }
 
 // Done only once on startup. There's probably a better way than json (yaml maybe?)
-const RESPONSES_TO_CAPS_PATH = path.join('src', 'data', 'responses_to_caps.JSON');
-const RESPONSES_TO_CAPS = JSON.parse(fs.readFileSync(RESPONSES_TO_CAPS_PATH)).responses
-
-const RESPONSES_TO_NEW_USER_PATH = path.join('src', 'data', 'responses_to_new_user.JSON');
-const RESPONSES_TO_NEW_USER_JSON = JSON.parse(fs.readFileSync(RESPONSES_TO_NEW_USER_PATH))
+const RESPONSES_TO_CAPS = JSON.parse(fs.readFileSync('src/data/responses_to_caps.JSON'))
+const RESPONSES_TO_NEW_USER = JSON.parse(fs.readFileSync('src/data/responses_to_new_user.JSON'))
+const RESPONSES_TO_POINTS_UP = JSON.parse(fs.readFileSync('src/data/responses_to_points_up.JSON'))
+const RESPONSES_TO_POINTS_DOWN = JSON.parse(fs.readFileSync('src/data/responses_to_points_down.JSON'))
 
 const GIVE_POINTS_REGEX = /(\+\+|--)\s*<@(.*)>/
 
@@ -35,7 +34,7 @@ const respond_to_event = (event) => {
   console.log(`Message looks like: ${message}`)
   
   if (event.bot_id == null && message === message.toUpperCase()) {
-    send_message(_.sample(RESPONSES_TO_CAPS), event.channel)
+    send_message(_.sample(RESPONSES_TO_CAPS.responses), event.channel)
   }
 
   const pointRegexMatch = event.text.match(GIVE_POINTS_REGEX)
@@ -52,7 +51,35 @@ const respond_to_event = (event) => {
         darbyDb.getUserPoints(userId, (currPoints) => {
           if (currPoints !== -1) {
             darbyDb.setUserPoints(userId, currPoints + valueToAdd, (success, points) => {
-
+              if (success) {
+                if (valueToAdd === 1){
+                  send_message(
+                    _.sample(
+                      RESPONSES_TO_POINTS_UP.responses
+                    ).replace(
+                      RESPONSES_TO_POINTS_UP.points_replacement_string,
+                      points
+                    ).replace(
+                      RESPONSES_TO_POINTS_UP.user_replacement_string,
+                      userId
+                    ),
+                    event.channel
+                  )
+                } else {
+                  send_message(
+                    _.sample(
+                      RESPONSES_TO_POINTS_DOWN.responses
+                    ).replace(
+                      RESPONSES_TO_POINTS_DOWN.points_replacement_string,
+                      points
+                    ).replace(
+                      RESPONSES_TO_POINTS_DOWN.user_replacement_string,
+                      userId
+                    ),
+                    event.channel
+                  )
+                }
+              }
             })
           }
         })
@@ -60,8 +87,8 @@ const respond_to_event = (event) => {
         darbyDb.addUser(userId, (success) => {
           if (success) {
             send_message(
-              _.sample(RESPONSES_TO_NEW_USER_JSON.responses).replace(
-                RESPONSES_TO_NEW_USER_JSON.userid_replacement_string, userId), event.channel)
+              _.sample(RESPONSES_TO_NEW_USER.responses).replace(
+                RESPONSES_TO_NEW_USER.user_replacement_string, userId), event.channel)
           }
         })
       }

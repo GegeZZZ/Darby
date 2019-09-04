@@ -37,7 +37,7 @@ const getUserPoints = (userId, callback) => {
     );
 }
 
-const setUserPoints = (userId, points) => {
+const setUserPoints = (userId, points, callback) => {
     darbyDb.query('UPDATE `user_points` SET `points` = ? WHERE `user_id` = ?;',
         [points, userId],
         function(err, res) {
@@ -45,10 +45,11 @@ const setUserPoints = (userId, points) => {
 
             if (err) {
                 console.log(`Unable to update points for user ${userId} (error: ${err}`)
-                return;
+                callback(false)
             }
 
             console.log(`User ${userId} points set to ${points}`)  
+            callback(true, points)
         }
     );
 }
