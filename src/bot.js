@@ -46,7 +46,6 @@ const respond_to_event = (event) => {
     const userId = pointRegexMatch[2]
 
     if (userId != event.user){
-
       const valueToAdd = action === '++' ? 1 : -1
 
       darbyDb.userExists(userId, (userExists) => {
@@ -96,6 +95,8 @@ const respond_to_event = (event) => {
           })
         }
       })
+    }else {
+      send_message(`Please don't try to change your own rating, <@${event.user}> :upside_down_face:`, event.channel)
     }
   }
 }
