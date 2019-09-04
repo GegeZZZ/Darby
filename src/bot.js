@@ -50,47 +50,14 @@ const respond_to_event = (event) => {
 
       darbyDb.userExists(userId, (userExists) => {
         if (userExists) {
-          darbyDb.getUserPoints(userId, (currPoints) => {
-            if (currPoints !== -1) {
-              darbyDb.setUserPoints(userId, currPoints + valueToAdd, (success, points) => {
-                if (success) {
-                  if (valueToAdd === 1){
-                    send_message(
-                      _.sample(
-                        RESPONSES_TO_POINTS_UP.responses
-                      ).replace(
-                        RESPONSES_TO_POINTS_UP.points_replacement_string,
-                        points
-                      ).replace(
-                        RESPONSES_TO_POINTS_UP.user_replacement_string,
-                        userId
-                      ),
-                      event.channel
-                    )
-                  } else {
-                    send_message(
-                      _.sample(
-                        RESPONSES_TO_POINTS_DOWN.responses
-                      ).replace(
-                        RESPONSES_TO_POINTS_DOWN.points_replacement_string,
-                        points
-                      ).replace(
-                        RESPONSES_TO_POINTS_DOWN.user_replacement_string,
-                        userId
-                      ),
-                      event.channel
-                    )
-                  }
-                }
-              })
-            }
-          })
+          addPointsToUser(userId, valueToAdd, event)
         } else {
           darbyDb.addUser(userId, (success) => {
             if (success) {
               send_message(
                 _.sample(RESPONSES_TO_NEW_USER.responses).replace(
                   RESPONSES_TO_NEW_USER.user_replacement_string, userId), event.channel)
+              addPointsToUser(userId, valueToAdd, event)
             }
           })
         }
@@ -99,6 +66,44 @@ const respond_to_event = (event) => {
       send_message(`Please don't try to change your own rating, <@${event.user}> :upside_down_face:`, event.channel)
     }
   }
+}
+
+function addPointsToUser(userId, valueToAdd, event) {
+  darbyDb.getUserPoints(userId, (currPoints) => {
+    if (currPoints !== -1) {
+      darbyDb.setUserPoints(userId, currPoints + valueToAdd, (success, points) => {
+        if (success) {
+          if (valueToAdd === 1){
+            send_message(
+              _.sample(
+                RESPONSES_TO_POINTS_UP.responses
+              ).replace(
+                RESPONSES_TO_POINTS_UP.points_replacement_string,
+                points
+              ).replace(
+                RESPONSES_TO_POINTS_UP.user_replacement_string,
+                userId
+              ),
+              event.channel
+            )
+          } else {
+            send_message(
+              _.sample(
+                RESPONSES_TO_POINTS_DOWN.responses
+              ).replace(
+                RESPONSES_TO_POINTS_DOWN.points_replacement_string,
+                points
+              ).replace(
+                RESPONSES_TO_POINTS_DOWN.user_replacement_string,
+                userId
+              ),
+              event.channel
+            )
+          }
+        }
+      })
+    }
+  })
 }
 
 module.exports = {send_message: send_message, respond_to_event: respond_to_event}
