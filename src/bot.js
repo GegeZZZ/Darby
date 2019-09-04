@@ -26,7 +26,7 @@ const RESPONSES_TO_CAPS = JSON.parse(fs.readFileSync(RESPONSES_TO_CAPS_PATH)).re
 
 const GIVE_POINTS_REGEX = /\+\+\s*<@(.*)>/
 
-const respond_to_event = (event, datastore) => {
+const respond_to_event = (event, storage) => {
   const message = event.text
   console.log(`Message looks like: ${message}`)
   
@@ -35,18 +35,23 @@ const respond_to_event = (event, datastore) => {
   }
 
   if (event.bot_id == null && GIVE_POINTS_REGEX.test(message)) {
-    const name = 'eee'
+    const name = 'jjjj'
+    console.log(`Store is ${storage}`)
 
-    if(datastore.has(name)){
-      const currVal = datastore.get(name)
-      const newResult = currVal + 1
+    storage.getItem(name).then((result) => {
+      console.log(`Result is ${result}`)
+      if (result !== undefined && result >= 0) {
+        const newResult = result + 1
 
-      datastore.set(name, newResult)
-      console.log(`Points: incremented ${name} to ${newResult}`)
-    } else {
-      datastore.set(name, 0);
-      console.log(`Points: added new key ${name}`)
-    }
+        storage.setItem(name, newResult).then(() => {
+          console.log(`Points: incremented ${name} to ${newResult}`)
+        })
+      }else{
+        storage.setItem(name, 0).then(() => {
+          console.log(`Points: added new key ${name}`)
+        })
+      }
+    })
   }
 }
 
