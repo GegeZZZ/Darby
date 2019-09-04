@@ -1,5 +1,10 @@
 {
     "description": "What Darby will reply if a new user joins the points system",
     "userid_replacement_string": "[user]",
-    "responses": ["<@[user]> wll now start collecting valuable points!"]
+    "responses": [
+        "<@[user]> wll now start collecting valuable points! :tada:",
+        "I'm going to start counting how many points <@[user]> gets from now on. :one: :two: :three:",
+        "GREAT: <@[user]> now gets to collect some of those sick points everyone talks about :fire:",
+        ":100: :100: :100: <@[user]>, are you ready to start tracking points?"
+    ]
 }
