@@ -39,6 +39,10 @@ const respond_to_event = (event) => {
     send_message(_.sample(RESPONSES_TO_CAPS.responses), event.channel)
   }
 
+  if (event.bot_id == null && message === '!zaccor2020' && !pointRegexMatch) {
+    send_message(':austin_salad: :austin_salad: :austin_salad:', event.channel)
+  }
+
   if (event.bot_id == null && pointRegexMatch) {
 
     // match: [full string, -- or ++, userID]
