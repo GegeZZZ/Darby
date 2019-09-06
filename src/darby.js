@@ -77,9 +77,15 @@ function respondToUppercaseEvent(event) {
 }
 
 function respondToCommandEvent(event) {
-  if (event.text === '!zaccor2020') {
-    sendMessage(':austin_salad: :austin_salad: :austin_salad:', event.channel)
-  }
+  const commandRegexMatch = event.text.match(COMMAND_REGEX)
+
+  const commandText = commandRegexMatch[1]
+
+  darbyDb.getResponseToCommand(commandText, (response) => {
+    if (response != null) {
+      sendMessage(response, event.channel)
+    }
+  })
 }
 
 function addPointsToUser(userId, valueToAdd, event) {
