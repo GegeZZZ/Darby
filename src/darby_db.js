@@ -29,7 +29,7 @@ const getUserPoints = (userId, callback) => {
             console.log('this.sql', this.sql);
             if (err) {
                 console.log(err)
-                return callback(-1);
+                return callback(null);
             } 
 
             return callback(rows[0].points);

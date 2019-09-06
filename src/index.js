@@ -5,7 +5,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const proxy = require('express-http-proxy')
 const config = require('./config')
-const bot = require('./bot')
+const darby = require('./darby')
 
 //Express
 let app = express()
@@ -26,7 +26,7 @@ app.post('/listeners/messages', (req, res) => {
   let payload = req.body
 
   if (payload.event) {
-    bot.respond_to_event(payload.event)
+    darby.respond_to_event(payload.event)
   }
 
   res.status(200).send({challenge: payload.challenge})
