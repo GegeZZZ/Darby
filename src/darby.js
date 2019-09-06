@@ -47,7 +47,7 @@ const respond_to_event = (event) => {
 }
 
 function respondToDarbyMention(event) {
-  addEmoji('darby', event.ts)
+  addEmoji('darby', event.channel, event.ts)
 }
 
 function respondToPointsEvent(event) {
@@ -186,11 +186,11 @@ function addEmoji(emojiName, channel, timestamp) {
     channel: channel
   }, (err) => {
     if (err) {
-      console.log(`Unable to put emoji ${emojiName} in the ts ${timeStamp} in channel ${channel}`)
+      console.log(`Unable to put emoji ${emojiName} in the ts ${timestamp} in channel ${channel}`)
       throw err
     }
 
-    console.log(`I put the emoji ${emojiName} in the ts ${timeStamp} in channel ${channel}`)
+    console.log(`I put the emoji ${emojiName} in the ts ${timestamp} in channel ${channel}`)
   })
 }
 
