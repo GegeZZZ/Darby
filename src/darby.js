@@ -13,17 +13,14 @@ const CAPS_RESPONSES = JSON.parse(fs.readFileSync('src/responses/caps.JSON'))
 const POINTS_DOWN_RESPONSES = JSON.parse(fs.readFileSync('src/responses/points_down.JSON'))
 const POINTS_UP_RESPONSES = JSON.parse(fs.readFileSync('src/responses/points_up.JSON'))
 const CHANGE_OWN_RATING_RESPONSES = JSON.parse(fs.readFileSync('src/responses/change_own_rating.JSON'))
+const NEW_COMMAND_RESPONSES = JSON.parse(fs.readFileSync('src/responses/new_command.JSON'))
 
-const GIVE_POINTS_REGEX = /(\+\+|--)\s*<@(.*)>/
-const COMMAND_REGEX = /!([^\s]*)/
+const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*)>/
+const GET_COMMAND_REGEX = /\?([^\s]*)/
+const ADD_COMMAND_REGEX = /!([^\s]*)\s*(.*$)/
 const UPPERCASE_REGEX = /^[^a-z]*$/
 
 const respond_to_event = (event) => {
-  // If the message is coming from Darby, ignore it
-  if (event.bot_id) {
-    return
-  }
-
   console.log(`Darby sees message: ${event.text}`)
 
   // The different types of events Darby is looking for
@@ -34,14 +31,21 @@ const respond_to_event = (event) => {
 
   if(event.text.match(GIVE_POINTS_REGEX)) {
     respondToPointsEvent(event)
-  } else if(event.text.match(COMMAND_REGEX)) {
-    respondToCommandEvent(event)
+  } else if(event.text.match(GET_COMMAND_REGEX)) {
+    respondToGetCommandEvent(event)
+  } else if(event.text.match(ADD_COMMAND_REGEX)) {
+    respondToAddCommandEvent(event)
   } else if(event.text.match(UPPERCASE_REGEX) || Math.random() < 0.02) {
     respondToUppercaseEvent(event)
   }
 }
 
 function respondToPointsEvent(event) {
+  if (event.bot_id) {
+    sendMessage("I DON'T GIVE OUT POINTS", event.channel)
+    return
+  }
+
   const pointRegexMatch = event.text.match(GIVE_POINTS_REGEX)
 
   // pointRegexMatch: [full string, -- or ++, userID]
@@ -73,11 +77,16 @@ function addNewUser(userId, valueToAdd, event) {
 }
 
 function respondToUppercaseEvent(event) {
+  // If the message is coming from Darby, ignore it
+  if (event.bot_id) {
+    return
+  }
+
   sendMessage(getCapsResponse(), event.channel)
 }
 
-function respondToCommandEvent(event) {
-  const commandRegexMatch = event.text.match(COMMAND_REGEX)
+function respondToGetCommandEvent(event) {
+  const commandRegexMatch = event.text.match(GET_COMMAND_REGEX)
 
   const commandText = commandRegexMatch[1]
 
@@ -86,6 +95,21 @@ function respondToCommandEvent(event) {
       sendMessage(response, event.channel)
     }
   })
+}
+
+function respondToAddCommandEvent(event) {
+  const commandRegexMatch = event.text.match(ADD_COMMAND_REGEX)
+
+  const commandText = commandRegexMatch[1]
+  const outputText = commandRegexMatch[2]
+
+  if (outputText.length > 0){
+    darbyDb.addCommand(commandText, outputText, event.user, (result) => {
+      if (result) {
+        sendMessage(getAddedCommandResponse(commandText), event.channel)
+      }
+    })
+  }
 }
 
 function addPointsToUser(userId, valueToAdd, event) {
@@ -122,6 +146,14 @@ function getChangeOwnRatingResponse(userId) {
 
 function getCapsResponse() {
   return _.sample(CAPS_RESPONSES.responses)
+}
+
+function getAddedCommandResponse(command) {
+  return getResponseWithReplacement(
+    NEW_COMMAND_RESPONSES.responses,
+    [NEW_COMMAND_RESPONSES.command_replacement_string],
+    [command.toUpperCase()]
+  )
 }
 
 function getPointsDownResponse(userId, points) {

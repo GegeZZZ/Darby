@@ -46,11 +46,11 @@ const setUserPoints = (userId, points, callback) => {
 
       if (err) {
         console.log(`Unable to update points for user ${userId} (error: ${err}`)
-        callback(false)
+        return callback(false)
       }
 
       console.log(`User ${userId} points set to ${points}`)
-      callback(true, points)
+      return callback(true, points)
     }
   );
 }
@@ -63,28 +63,28 @@ const addUser = (userId, callback) => {
 
       if (err) {
         console.log(`Unable to add user ${userId} (error: ${err})`)
-        callback(false)
+        return callback(false)
       }
 
       console.log(`Successfully added user ${userId}`)
-      callback(true)
+      return callback(true)
     }
   );
 }
 
 const addCommand = (command, output, userId, callback) => {
   darbyDb.query('INSERT INTO `user_commands` (`command_name`, `command_output`, `user_id`) VALUES (?, ?, ?);',
-  [command, output, user_id],
+  [command, output, userId],
   function (err, res) {
     console.log('this.sql', this.sql);
 
     if (err) {
       console.log(`Unable to add command ${command} (error: ${err})`)
-      callback(false)
+      return callback(false)
     }
 
     console.log(`Successfully added command ${command} with output ${output} by user ${userId}`)
-    callback(true)
+    return callback(true)
   }
 );
 }
@@ -98,16 +98,16 @@ const getResponseToCommand = (command, callback) => {
 
       if (err) {
         console.log(`Error selecting command ${command} (err: ${err})`)
-        callback(null)
+        return callback(null)
       }
       
       if (res.length === 0){
         console.log(`No entry found for command ${command}`)
-        callback(null)
+        return callback(null)
       }
 
       console.log(`Sucessfully found entry for command ${command}.`)
-      callback(_.sample(res).command_output)
+      return callback(_.sample(res).command_output)
     }
   )
 }
@@ -117,5 +117,6 @@ module.exports = {
   userExists: userExists,
   getUserPoints: getUserPoints,
   setUserPoints: setUserPoints,
-  getResponseToCommand: getResponseToCommand
+  getResponseToCommand: getResponseToCommand,
+  addCommand: addCommand
 }
