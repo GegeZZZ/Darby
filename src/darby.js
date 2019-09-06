@@ -19,6 +19,7 @@ const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*)>/
 const GET_COMMAND_REGEX = /^\?([^\s]*)/
 const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/
 const UPPERCASE_REGEX = /^[^a-z]+$/
+const DARBY_MENTIONED_REGEX = /darby/i
 
 const respond_to_event = (event) => {
   console.log(`Darby sees message: ${event.text}`)
@@ -38,6 +39,15 @@ const respond_to_event = (event) => {
   } else if(event.text.match(UPPERCASE_REGEX) || Math.random() < 0.02) {
     respondToUppercaseEvent(event)
   }
+
+  // In ADDITION to any of those actions, we react if someone mentions darby
+  if(event.text.match(DARBY_MENTIONED_REGEX)) {
+    respondToDarbyMention(event)
+  }
+}
+
+function respondToDarbyMention(event) {
+  addEmoji('darby', event.ts)
 }
 
 function respondToPointsEvent(event) {
@@ -165,6 +175,22 @@ function sendMessage(text, channel) {
     if (err) throw err
 
     console.log(`I sent the message "${text}" to the channel "${channel}"`)
+  })
+}
+
+function addEmoji(emojiName, channel, timestamp) {
+  slack.reactions.add({
+    token: config('BOT_USER_TOKEN'),
+    name: emojiName,
+    timestamp: timestamp,
+    channel: channel
+  }, (err) => {
+    if (err) {
+      console.log(`Unable to put emoji ${emojiName} in the ts ${timeStamp} in channel ${channel}`)
+      throw err
+    }
+
+    console.log(`I put the emoji ${emojiName} in the ts ${timeStamp} in channel ${channel}`)
   })
 }
 
