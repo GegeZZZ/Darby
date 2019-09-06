@@ -18,7 +18,7 @@ const NEW_COMMAND_RESPONSES = JSON.parse(fs.readFileSync('src/responses/new_comm
 const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*)>/
 const GET_COMMAND_REGEX = /^\?([^\s]*)/
 const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/
-const UPPERCASE_REGEX = /^[^a-z]*$/
+const UPPERCASE_REGEX = /^[^a-z]+$/
 
 const respond_to_event = (event) => {
   console.log(`Darby sees message: ${event.text}`)
