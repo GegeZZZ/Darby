@@ -16,8 +16,8 @@ const CHANGE_OWN_RATING_RESPONSES = JSON.parse(fs.readFileSync('src/responses/ch
 const NEW_COMMAND_RESPONSES = JSON.parse(fs.readFileSync('src/responses/new_command.JSON'))
 
 const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*)>/
-const GET_COMMAND_REGEX = /\?([^\s]*)/
-const ADD_COMMAND_REGEX = /!([^\s]*)\s*(.*$)/
+const GET_COMMAND_REGEX = /^\?([^\s]*)/
+const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/
 const UPPERCASE_REGEX = /^[^a-z]*$/
 
 const respond_to_event = (event) => {
@@ -117,11 +117,7 @@ function addPointsToUser(userId, valueToAdd, event) {
     if (currPoints != null) {
       darbyDb.setUserPoints(userId, currPoints + valueToAdd, (success, points) => {
         if (success) {
-          if (valueToAdd === 1){
-            sendMessage(getPointsUpResponse(userId, points), event.channel)
-          } else {
-            sendMessage(getPointsDownResponse(userId, points), event.channel)
-          }
+          sendMessage(getUserPointsChangeResponse(userId, points, valueToAdd), event.channel)
         }
       })
     }
@@ -129,19 +125,17 @@ function addPointsToUser(userId, valueToAdd, event) {
 }
 
 function getNewUserResponse(userId) {
-  return getResponseWithReplacement(
-    NEW_USER_RESPONSES.responses,
-    [NEW_USER_RESPONSES.user_replacement_string],
-    [userId]
-  )
+  return getResponseWithReplacement(NEW_USER_RESPONSES, [userId])
+}
+
+function getUserPointsChangeResponse(userId, points, valueToAdd) {
+  const responses = valueToAdd === 1 ? POINTS_UP_RESPONSES : POINTS_DOWN_RESPONSES
+
+  return getResponseWithReplacement(responses, [userId, points])
 }
 
 function getChangeOwnRatingResponse(userId) {
-  return getResponseWithReplacement(
-    CHANGE_OWN_RATING_RESPONSES.responses,
-    [CHANGE_OWN_RATING_RESPONSES.user_replacement_string],
-    [userId]
-  )
+  return getResponseWithReplacement(CHANGE_OWN_RATING_RESPONSES, [userId])
 }
 
 function getCapsResponse() {
@@ -149,34 +143,14 @@ function getCapsResponse() {
 }
 
 function getAddedCommandResponse(command) {
-  return getResponseWithReplacement(
-    NEW_COMMAND_RESPONSES.responses,
-    [NEW_COMMAND_RESPONSES.command_replacement_string],
-    [command.toUpperCase()]
-  )
+  return getResponseWithReplacement(NEW_COMMAND_RESPONSES, [command])
 }
 
-function getPointsDownResponse(userId, points) {
-  return getResponseWithReplacement(
-    POINTS_DOWN_RESPONSES.responses,
-    [POINTS_DOWN_RESPONSES.points_replacement_string, POINTS_DOWN_RESPONSES.user_replacement_string],
-    [points, userId]
-  )
-}
+function getResponseWithReplacement(responsesJson, replacements){
+  let response = _.sample(responsesJson.responses)
 
-function getPointsUpResponse(userId, points) {
-  return getResponseWithReplacement(
-    POINTS_UP_RESPONSES.responses,
-    [POINTS_UP_RESPONSES.points_replacement_string, POINTS_UP_RESPONSES.user_replacement_string],
-    [points, userId]
-  )
-}
-
-function getResponseWithReplacement(responses, placeholders, replacements){
-  let response = _.sample(responses)
-
-  for (var i = 0; i < placeholders.length; i++) {
-    response = response.replace(placeholders[i], replacements[i])
+  for (var i = 0; i < responsesJson.placeholders.length; i++) {
+    response = response.replace(responsesJson.placeholders[i], replacements[i])
   }
 
   return response
@@ -186,7 +160,7 @@ function sendMessage(text, channel) {
   slack.chat.postMessage({
     token: config('BOT_USER_TOKEN'),
     channel: channel,
-    text: text
+    text: text.toUpperCase()
   }, (err) => {
     if (err) throw err
 

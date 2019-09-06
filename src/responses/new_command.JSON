@@ -1,6 +1,6 @@
 {
     "description": "What Darby will reply when a new command is added",
-    "command_replacement_string": "[command]",
+    "placeholders": ["[command]"],
     "responses": [
         "NOTED :notebook:. I'LL REMEMBER '[command]' FOR THE REST OF MY LIFE. :crossed_fingers:",
         "OKAY OKAY I'LL TRY TO REMEMBER THAT ([command]).",

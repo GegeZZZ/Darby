@@ -1,6 +1,6 @@
 {
     "description": "What Darby will reply if someone tries to change their own ranking.",
-    "user_replacement_string": "[user]",
+    "placeholders": ["[user]"],
     "responses": [
         "PLEASE DON'T TRY TO CHANGE YOUR OWN RATING, <@[user]> :upside_down_face:",
         "WE ARE ALL MASTERS OF OUR OWN DESTINY. BUT YOU CAN'T CHANGE YOUR OWN DARBY RATING. :face_palm:"

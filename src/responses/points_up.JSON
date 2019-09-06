@@ -1,7 +1,6 @@
 {
     "description": "What Darby will reply if a user gets some sweet points",
-    "user_replacement_string": "[user]",
-    "points_replacement_string": "[points]",
+    "placeholders": ["[user]", "[points]"],
     "responses": [
         "<@[user]> JUST GOT SOME SWEET POINTS! :tada: NOW AT [points] POINTS",
         "CONGRATS ON THE POINT <@[user]>! :smiley: I'VE MADE SURE TO RECORD THIS IN MY BOOK. YOU HAVE [points] TOTAL",

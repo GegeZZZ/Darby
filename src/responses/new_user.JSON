@@ -1,6 +1,6 @@
 {
     "description": "What Darby will reply if a new user joins the points system",
-    "user_replacement_string": "[user]",
+    "placeholders": ["[user]"],
     "responses": [
         "<@[user]> WLL NOW START COLLECTING VALUABLE POINTS! :tada:",
         "I'M GOING TO START COUNTING HOW MANY POINTS <@[user]> GETS FROM NOW ON. :one: :two: :three:",
