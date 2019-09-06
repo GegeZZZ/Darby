@@ -13,4 +13,5 @@ You should be able to clone this and run `npm start`. You may need to create an 
 
 * Get linter
 * Catch more errors
-* Add more functionality
+* Add birthday messages
+* Add better request authentication
