@@ -73,7 +73,20 @@ const addUser = (userId, callback) => {
 }
 
 const addCommand = (command, output, userId, callback) => {
+  darbyDb.query('INSERT INTO `user_commands` (`command_name`, `command_output`, `user_id`) VALUES (?, ?, ?);',
+  [command, output, user_id],
+  function (err, res) {
+    console.log('this.sql', this.sql);
 
+    if (err) {
+      console.log(`Unable to add command ${command} (error: ${err})`)
+      callback(false)
+    }
+
+    console.log(`Successfully added command ${command} with output ${output} by user ${userId}`)
+    callback(true)
+  }
+);
 }
 
 const getResponseToCommand = (command, callback) => {
@@ -93,8 +106,8 @@ const getResponseToCommand = (command, callback) => {
         callback(null)
       }
 
-      console.log(`Sucessfully found entry for command ${command}. Result: ${res}`)
-      callback(_.sample(res)[0])
+      console.log(`Sucessfully found entry for command ${command}.`)
+      callback(_.sample(res).command_output)
     }
   )
 }
