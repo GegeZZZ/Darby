@@ -15,3 +15,4 @@ You should be able to clone this and run `npm start`. You may need to create an 
 * Catch more errors
 * Add birthday messages
 * Add better request authentication
+* Add "sidekicks" functionality
