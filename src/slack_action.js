@@ -41,7 +41,7 @@ function getUsersList(usersDataCallback) {
       throw err
     }
 
-    usersDataCallback(result)
+    usersDataCallback(result.members)
   })
 }
 

@@ -128,7 +128,7 @@ const usersTableFull = (callback) => {
 }
 
 const fillUsersTable = (usersData, callback) => {
-  usersData.members.forEach(userData => {
+  usersData.forEach(userData => {
     // If deleted or a bot, ignore them (note that slackbot is not considered a bot)
     if (!userData.deleted && !userData.is_bot && userData.name !== 'slackbot') {
       // Note that it would be faster to make this one call, but this should only run once ever.
