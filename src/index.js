@@ -9,26 +9,44 @@ const darby = require('./darby')
 const darbyDb = require('./darby_db')
 const slackAction = require('./slack_action')
 
+function userIsHuman(user) {
+  return !user.deleted && !user.is_bot && user.name !== 'slackbot'
+}
+
 // Database
 // If we don't have our users table, create it
+// One tricky bit with this is we need to first get the users, then, for each user,
+// get the slack channel (through slack api), and then combine those fields and 
+// write them to the db. I do this in a really gross way, and I hate it. But at least it works
+// If you're here to judge my code, and want to find the grossest spot, this is it.
+// The good news is that it only runs once, when the app first runs
+// (although it should probably run if there's a change in users)
 darbyDb.usersTableFull((tableFull) => {
   if (!tableFull) {
     slackAction.getUsersList((usersData) => {
-      // Now we need to open an IM (dm) with each person and find the dm channel id
-      const usersDataWithDmChannel = usersData.map(userData => {
-        return slackAction.openDmWithUser(userData.id, (channel) => {
+      const activeHumanUsers = usersData.filter(user => userIsHuman(user));
+      let activeHumanUsersWithDm = []
+
+      function addActiveHumanUserWithDm(activeHumanUserWithDm) {
+        activeHumanUsersWithDm.push(activeHumanUserWithDm)
+
+        if (activeHumanUsers.length === activeHumanUsersWithDm.length) {
+          darbyDb.fillUsersTable(activeHumanUsersWithDm, (_success) => {})
+        }
+      }
+
+      activeHumanUsers.forEach((user) => {
+        slackAction.openDmWithUser(user.id, (channel) => {
           const result = {
-            id: userData.id,
-            name: userData.name,
-            real_name: userData.real_name,
+            id: user.id,
+            name: user.name,
+            real_name: user.real_name,
             dm_channel_id: channel
           }
-  
-          return result;
-        })
-      });
 
-      darbyDb.fillUsersTable(usersDataWithDmChannel, (_success) => {})
+          return addActiveHumanUserWithDm(result);
+        })
+      })
     })
   }
 })

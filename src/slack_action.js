@@ -55,7 +55,8 @@ function openDmWithUser(userId, callback) {
       throw err
     }
 
-    return callback(result)
+    console.log(`Successfully opened DM with user ${userId} (channel ${result.channel.id})`)
+    return callback(result.channel.id)
   })
 }
 

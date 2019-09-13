@@ -127,28 +127,25 @@ const usersTableFull = (callback) => {
   );
 }
 
-const fillUsersTable = (usersData, callback) => {
-  usersData.forEach(userData => {
-    // If deleted or a bot, ignore them (note that slackbot is not considered a bot)
-    if (!userData.deleted && !userData.is_bot && userData.name !== 'slackbot') {
-      // Note that it would be faster to make this one call, but this should only run once ever.
-      darbyDb.query('INSERT INTO `users` (`user_id`, `username`, `real_name`, `dm_channel_id`) VALUES (?, ?, ?, ?);',
-        [userData.id, userData.name, userData.real_name],
-        function (err) {
-          console.log('this.sql', this.sql);
+const fillUsersTable = (users, callback) => {
+  users.forEach(user => {
+    console.log(`I want to write the single piece: ${user}`)
+    // Note that it would be faster to make this one call, but this should only run once ever.
+    darbyDb.query('INSERT INTO `users` (`user_id`, `username`, `real_name`, `dm_channel_id`) VALUES (?, ?, ?, ?);',
+      [user.id, user.name, user.real_name, user.dm_channel_id],
+      function (err) {
+        console.log('this.sql', this.sql);
 
-          if (err) {
-            console.log(`Unable to add user data ${userData} (error: ${err})`)
-            return callback(false)
-          }
-
-          console.log(`Successfully added userData for user Id ${userData.id}`)
-          return callback(true)
+        if (err) {
+          console.log(`Unable to add user ${user} (error: ${err})`)
+          return callback(false)
         }
-      );
-    }
+
+        console.log(`Successfully added user for user Id ${user.id}`)
+        return callback(true)
+      }
+    );
   });
-  console.log(`I've been asked to fill the users table with ${usersData}`)
 }
 
 module.exports = {
