@@ -45,8 +45,23 @@ function getUsersList(usersDataCallback) {
   })
 }
 
+function openDmWithUser(userId, callback) {
+  slack.im.open({
+    token: config('BOT_USER_TOKEN'),
+    user: userId
+  }, (err, result) => {
+    if (err) {
+      console.log(`Unable to open Dm/IM with user ${userId}.`)
+      throw err
+    }
+
+    return callback(result)
+  })
+}
+
 module.exports = {
   sendMessage: sendMessage,
   addEmoji: addEmoji,
-  getUsersList: getUsersList
+  getUsersList: getUsersList,
+  openDmWithUser: openDmWithUser
 }

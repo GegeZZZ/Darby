@@ -13,6 +13,7 @@ const POINTS_DOWN_RESPONSES = JSON.parse(fs.readFileSync('src/responses/points_d
 const POINTS_UP_RESPONSES = JSON.parse(fs.readFileSync('src/responses/points_up.JSON'))
 const CHANGE_OWN_RATING_RESPONSES = JSON.parse(fs.readFileSync('src/responses/change_own_rating.JSON'))
 const NEW_COMMAND_RESPONSES = JSON.parse(fs.readFileSync('src/responses/new_command.JSON'))
+const DM_MESSAGE_RESPONSES = JSON.parse(fs.readFileSync('src/responses/dm_message.JSON'))
 
 const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*)>/
 const GET_COMMAND_REGEX = /^\?([^\s]*)/
@@ -49,16 +50,11 @@ const respond_to_event = (event) => {
 }
 
 function respondToDmRequestEvent(event) {
-  // We need to do a couple things here.
-  // First check if our db with channel_ids for users is empty
-  darbyDb.usersCollected((usersCollected) => {
+  // Get (or create) the dm channel for the user
+  darbyDb.getDmChannelForUser(event.user, (channelId, userName) => {
+    // Send a dm message to that channel
+    slackAction.sendMessage(getDmMessage(userName), channelId)
   })
-  // If so, initialize the users table
-  // Otherwise, check if the dm channel id for that user is present
-  // If so, do nothing
-  // If not, open a new IM (dm) with the person (no-op if open, same as checking list)
-  // Then we will send a message to that (maybe newly) created channel
-  slackAction.sendMessage("WHAT DO YOU WANT", event.user)
 }
 
 function respondToDarbyMention(event) {
@@ -161,6 +157,10 @@ function getUserPointsChangeResponse(userId, points, valueToAdd) {
 
 function getChangeOwnRatingResponse(userId) {
   return getResponseWithReplacement(CHANGE_OWN_RATING_RESPONSES, [userId])
+}
+
+function getDmMessage(userName) {
+  return getResponseWithReplacement(DM_MESSAGE_RESPONSES, [userName])
 }
 
 function getCapsResponse() {

@@ -14,7 +14,21 @@ const slackAction = require('./slack_action')
 darbyDb.usersTableFull((tableFull) => {
   if (!tableFull) {
     slackAction.getUsersList((usersData) => {
-      darbyDb.fillUsersTable(usersData, (_success) => {})
+      // Now we need to open an IM (dm) with each person and find the dm channel id
+      const usersDataWithDmChannel = usersData.map(userData => {
+        return slackAction.openDmWithUser(userData.id, (channel) => {
+          const result = {
+            id: userData.id,
+            name: userData.name,
+            real_name: userData.real_name,
+            dm_channel_id: channel
+          }
+  
+          return result;
+        })
+      });
+
+      darbyDb.fillUsersTable(usersDataWithDmChannel, (_success) => {})
     })
   }
 })
