@@ -20,6 +20,7 @@ const GET_COMMAND_REGEX = /^\?([^\s]*)/
 const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/
 const UPPERCASE_REGEX = /^[^a-z]+$/
 const DARBY_MENTIONED_REGEX = /darby/i
+const DM_ME_REGEX = /^dm\s*me/i
 
 const respond_to_event = (event) => {
   console.log(`Darby sees message: ${event.text}`)
@@ -36,6 +37,8 @@ const respond_to_event = (event) => {
     respondToGetCommandEvent(event)
   } else if(event.text.match(ADD_COMMAND_REGEX)) {
     respondToAddCommandEvent(event)
+  } else if(event.text.match(DM_ME_REGEX)) {
+    respondToDmRequestEvent(event)
   } else if(event.text.match(UPPERCASE_REGEX) || Math.random() < 0.02) {
     respondToUppercaseEvent(event)
   }
@@ -44,6 +47,10 @@ const respond_to_event = (event) => {
   if(event.text.match(DARBY_MENTIONED_REGEX)) {
     respondToDarbyMention(event)
   }
+}
+
+function respondToDmRequestEvent(event) {
+  sendMessage("WHAT DO YOU WANT", event.user)
 }
 
 function respondToDarbyMention(event) {
