@@ -6,8 +6,20 @@ const express = require('express')
 const proxy = require('express-http-proxy')
 const config = require('./config')
 const darby = require('./darby')
+const darbyDb = require('./darby_db')
+const slackAction = require('./slack_action')
 
-//Express
+// Database
+// If we don't have our users table, create it
+darbyDb.usersTableFull((tableFull) => {
+  if (!tableFull) {
+    slackAction.getUsersList((usersData) => {
+      darbyDb.fillUsersTable(usersData)
+    })
+  }
+})
+
+// Express
 let app = express()
 
 if (config('PROXY_URI')) {

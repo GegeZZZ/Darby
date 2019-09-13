@@ -1,11 +1,10 @@
 
 'use strict'
 
-const slack = require('slack')
 const _ = require('lodash')
 const fs = require('fs')
-const config = require('./config')
 const darbyDb = require('./darby_db')
+const slackAction = require('./slack_action')
 
 // Done only once on startup. There's probably a better way than json (yaml maybe?)
 const NEW_USER_RESPONSES = JSON.parse(fs.readFileSync('src/responses/new_user.JSON'))
@@ -50,16 +49,25 @@ const respond_to_event = (event) => {
 }
 
 function respondToDmRequestEvent(event) {
-  sendMessage("WHAT DO YOU WANT", event.user)
+  // We need to do a couple things here.
+  // First check if our db with channel_ids for users is empty
+  darbyDb.usersCollected((usersCollected) => {
+  })
+  // If so, initialize the users table
+  // Otherwise, check if the dm channel id for that user is present
+  // If so, do nothing
+  // If not, open a new IM (dm) with the person (no-op if open, same as checking list)
+  // Then we will send a message to that (maybe newly) created channel
+  slackAction.sendMessage("WHAT DO YOU WANT", event.user)
 }
 
 function respondToDarbyMention(event) {
-  addEmoji('darby', event.channel, event.ts)
+  slackAction.addEmoji('darby', event.channel, event.ts)
 }
 
 function respondToPointsEvent(event) {
   if (event.bot_id) {
-    sendMessage("I DON'T GIVE OUT POINTS", event.channel)
+    slackAction.sendMessage("I DON'T GIVE OUT POINTS", event.channel)
     return
   }
 
@@ -80,14 +88,14 @@ function respondToPointsEvent(event) {
       }
     })
   }else {
-    sendMessage(getChangeOwnRatingResponse(userId), event.channel)
+    slackAction.sendMessage(getChangeOwnRatingResponse(userId), event.channel)
   }
 }
 
 function addNewUser(userId, valueToAdd, event) {
   darbyDb.addUser(userId, (success) => {
     if (success) {
-      sendMessage(getNewUserResponse(userId), event.channel)
+      slackAction.sendMessage(getNewUserResponse(userId), event.channel)
       addPointsToUser(userId, valueToAdd, event)
     }
   })
@@ -99,7 +107,7 @@ function respondToUppercaseEvent(event) {
     return
   }
 
-  sendMessage(getCapsResponse(), event.channel)
+  slackAction.sendMessage(getCapsResponse(), event.channel)
 }
 
 function respondToGetCommandEvent(event) {
@@ -109,7 +117,7 @@ function respondToGetCommandEvent(event) {
 
   darbyDb.getResponseToCommand(commandText, (response) => {
     if (response != null) {
-      sendMessage(response, event.channel)
+      slackAction.sendMessage(response, event.channel)
     }
   })
 }
@@ -123,7 +131,7 @@ function respondToAddCommandEvent(event) {
   if (outputText.length > 0){
     darbyDb.addCommand(commandText, outputText, event.user, (result) => {
       if (result) {
-        sendMessage(getAddedCommandResponse(commandText), event.channel)
+        slackAction.sendMessage(getAddedCommandResponse(commandText), event.channel)
       }
     })
   }
@@ -134,7 +142,7 @@ function addPointsToUser(userId, valueToAdd, event) {
     if (currPoints != null) {
       darbyDb.setUserPoints(userId, currPoints + valueToAdd, (success, points) => {
         if (success) {
-          sendMessage(getUserPointsChangeResponse(userId, points, valueToAdd), event.channel)
+          slackAction.sendMessage(getUserPointsChangeResponse(userId, points, valueToAdd), event.channel)
         }
       })
     }
@@ -171,34 +179,6 @@ function getResponseWithReplacement(responsesJson, replacements){
   }
 
   return response
-}
-
-function sendMessage(text, channel) {
-  slack.chat.postMessage({
-    token: config('BOT_USER_TOKEN'),
-    channel: channel,
-    text: text.toUpperCase()
-  }, (err) => {
-    if (err) throw err
-
-    console.log(`I sent the message "${text}" to the channel "${channel}"`)
-  })
-}
-
-function addEmoji(emojiName, channel, timestamp) {
-  slack.reactions.add({
-    token: config('BOT_USER_TOKEN'),
-    name: emojiName,
-    timestamp: timestamp,
-    channel: channel
-  }, (err) => {
-    if (err) {
-      console.log(`Unable to put emoji ${emojiName} in the ts ${timestamp} in channel ${channel}`)
-      throw err
-    }
-
-    console.log(`I put the emoji ${emojiName} in the ts ${timestamp} in channel ${channel}`)
-  })
 }
 
 module.exports = {respond_to_event: respond_to_event}

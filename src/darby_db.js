@@ -112,11 +112,32 @@ const getResponseToCommand = (command, callback) => {
   )
 }
 
+const usersTableFull = (callback) => {
+  darbyDb.query('SELECT * FROM `users`',
+    [],
+    function (err, res) {
+      console.log('this.sql', this.sql);
+      if (err) {
+        console.log(err)
+        return callback(false);
+      }
+
+      return callback(res.length > 0);
+    }
+  );
+}
+
+const fillUsersTable = (usersData) => {
+  console.log(`I've been asked to fill the users table with ${usersData}`)
+}
+
 module.exports = {
   addUser: addUser,
   userExists: userExists,
   getUserPoints: getUserPoints,
   setUserPoints: setUserPoints,
   getResponseToCommand: getResponseToCommand,
-  addCommand: addCommand
+  addCommand: addCommand,
+  usersTableFull: usersTableFull,
+  fillUsersTable: fillUsersTable
 }
