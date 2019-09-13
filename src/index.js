@@ -14,7 +14,7 @@ const slackAction = require('./slack_action')
 darbyDb.usersTableFull((tableFull) => {
   if (!tableFull) {
     slackAction.getUsersList((usersData) => {
-      darbyDb.fillUsersTable(usersData)
+      darbyDb.fillUsersTable(usersData, (_success) => {})
     })
   }
 })

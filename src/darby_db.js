@@ -127,7 +127,27 @@ const usersTableFull = (callback) => {
   );
 }
 
-const fillUsersTable = (usersData) => {
+const fillUsersTable = (usersData, callback) => {
+  usersData.members.forEach(userData => {
+    // If deleted or a bot, ignore them (note that slackbot is not considered a bot)
+    if (!userData.deleted && !userData.is_bot && userData.name !== 'slackbot') {
+      // Note that it would be faster to make this one call, but this should only run once ever.
+      darbyDb.query('INSERT INTO `users` (`user_id`, `username`, `real_name`) VALUES (?, ?, ?);',
+        [userData.id, userData.name, userData.real_name],
+        function (err) {
+          console.log('this.sql', this.sql);
+
+          if (err) {
+            console.log(`Unable to add user data ${userData} (error: ${err})`)
+            return callback(false)
+          }
+
+          console.log(`Successfully added userData for user Id ${userData.id}`)
+          return callback(true)
+        }
+      );
+    }
+  });
   console.log(`I've been asked to fill the users table with ${usersData}`)
 }
 
