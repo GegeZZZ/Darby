@@ -20,7 +20,7 @@ const GET_COMMAND_REGEX = /^\?([^\s]*)/
 const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/
 const UPPERCASE_REGEX = /^[^a-z]+$/
 const DARBY_MENTIONED_REGEX = /darby/i
-const DM_ME_REGEX = /^dm\s*me/i
+const DM_ME_REGEX = /(^|\s)+dm\sme/i
 
 const respond_to_event = (event) => {
   console.log(`Darby sees message: ${event.text}`)
@@ -52,8 +52,11 @@ const respond_to_event = (event) => {
 function respondToDmRequestEvent(event) {
   // Get (or create) the dm channel for the user
   darbyDb.getDmChannelForUser(event.user, (channelId, userName) => {
-    // Send a dm message to that channel
-    slackAction.sendMessage(getDmMessage(userName), channelId)
+    console.log(`Received channel ID ${channelId} and user name ${userName}`)
+    if (channelId && userName){
+      // Send a dm message to that channel
+      slackAction.sendMessage(getDmMessage(userName), channelId)
+    }
   })
 }
 

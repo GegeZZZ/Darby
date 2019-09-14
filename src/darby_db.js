@@ -148,6 +148,29 @@ const fillUsersTable = (users, callback) => {
   });
 }
 
+const getDmChannelForUser = (user, callback) => {
+  darbyDb.query(
+    'SELECT `real_name`, `dm_channel_id` FROM `users` WHERE `user_id` = ?',
+    [user],
+    function (err, res) {
+      console.log('this.sql', this.sql);
+
+      if (err) {
+        console.log(`Error selecting user ${user} (err: ${err})`)
+        return callback()
+      }
+      
+      if (res.length === 0){
+        console.log(`No entry found for user ${user}`)
+        return callback()
+      }
+
+      console.log(`Sucessfully found entry for user ${user}.`)
+      return callback(res[0].dm_channel_id, res[0].real_name)
+    }
+  )
+}
+
 module.exports = {
   addUser: addUser,
   userExists: userExists,
@@ -156,5 +179,6 @@ module.exports = {
   getResponseToCommand: getResponseToCommand,
   addCommand: addCommand,
   usersTableFull: usersTableFull,
-  fillUsersTable: fillUsersTable
+  fillUsersTable: fillUsersTable,
+  getDmChannelForUser: getDmChannelForUser
 }
