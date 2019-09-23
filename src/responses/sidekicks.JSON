@@ -2,7 +2,10 @@
   "description": "What Darby will send when two people match on sidekicks",
   "placeholders": ["[userOne]", "[userTwo]"],
   "responses": [
-    "<@[userOne]>, have you met <@[userTwo]>? Probably. But you two should hang out!",
-    "HOORAY! <@[userOne]>, you are the lucky winner of this week's sidekicks with <@[userTwo]> :white_check_mark: How will you celebrate your victory??"
+    "<@[userOne]>, have you met <@[userTwo]>? Probably, I don't know. But you two should hang out. Can you both meet for coffee Tuesday at 10 AM?",
+    "GREAT... <@[userOne]>, you are the 'lucky' winner of meeting up with <@[userTwo]> :white_check_mark: How about lunch on Wednesday?",
+    "<@[userOne]>, <@[userTwo]> :tada: Why don't you two have a coffee or tea break Thursday at 10 AM? I would if I were free.",
+    "<@[userOne]>, <@[userTwo]> You two got matched to meet up and get to know each other better. Are you both free Friday at lunch?",
+    "Hey <@[userOne]> and <@[userTwo]>. You were chosen to meet up with each other this week. Let's all meet up at a cafe on Tuesday (I can't make it)."
   ]
 }
