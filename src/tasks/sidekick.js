@@ -10,11 +10,14 @@ console.log(`DAY: ${new Date().getDay()}`);
 const today = new Date().getDay();
 
 if (today === 1) {
-  darbyDb.getAllUserIds(_res => {
-    console.log(_res);
-    let notRes = _.shuffle(["UMX7Q9LFP", "UMZBQQ0KZ"]);
-    const userIdsLeftHalf = notRes.splice(0, notRes.length / 2);
-    const userIdsRightHalf = notRes;
+  darbyDb.getAllUserIds(res => {
+    console.log(res);
+    let shuffledUserIds = _.shuffle(res);
+    const userIdsLeftHalf = shuffledUserIds.splice(
+      0,
+      shuffledUserIds.length / 2
+    );
+    const userIdsRightHalf = shuffledUserIds;
 
     for (let i = 0; i < userIdsRightHalf.length; i++) {
       slackAction.openDmWithUsers(
