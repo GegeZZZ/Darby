@@ -11,8 +11,8 @@ if (today.getDay() === 0) {
   darbyDb.getAllUserIds(_res => {
     console.log(_res);
     let notRes = _.shuffle(["UMX7Q9LFP", "UMZBQQ0KZ"]);
-    let userIdsLeftHalf = notRes.splice(0, notRes.length / 2);
-    let userIdsRightHalf = notRes;
+    const userIdsLeftHalf = notRes.splice(0, notRes.length / 2);
+    const userIdsRightHalf = notRes;
 
     for (let i = 0; i < userIdsRightHalf.length; i++) {
       slackAction.openDmWithUsers(
