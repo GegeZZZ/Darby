@@ -22,3 +22,4 @@ You should be able to clone this and run `npm start`. You may need to create an 
 * Add birthday messages
 * Add better request authentication
 * Add "sidekicks" functionality
+* Let Darby keep track of bets
