@@ -1,17 +1,28 @@
+"use strict";
 
-'use strict'
+const darbyDb = require("../darby_db");
+const slackAction = require("../slack_action");
 
-const darbyDb = require('../darby_db')
-const slackAction = require('../slack_action')
+darbyDb.getDmChannelForUser("UMX7Q9LFP", dmChannelId => {
+  slackAction.sendMessage("TESTING OUT TASKS", dmChannelId);
+});
 
-darbyDb.getDmChannelForUser("UMX7Q9LFP", (dmChannelId) => {
-    slackAction.sendMessage("TESTING OUT TASKS", dmChannelId)
-})
+darbyDb.getAllUserIds(_res => {
+  console.log(_res);
+  let notRes = ["UMX7Q9LFP", "UMZBQQ0KZ"];
+  let userIdsLeftHalf = notRes.splice(0, notRes.length / 2);
+  let userIdsRightHalf = notRes;
 
-// Steps for sidekicks
-
-// 1. Get all User Ids,  names and DM channels
-
-// 2. Copy user Ids and make pairs
-
-// 3. DM each pair and ask them to meet up? Or make a group chat?
+  for (let i = 0; i < userIdsRightHalf.length; i++) {
+    slackAction.openDmWithUsers(
+      userIdsLeftHalf[i],
+      userIdsRightHalf[i],
+      dmChannelId => {
+        slackAction.sendMessage(
+          `Hello <@${userIdsLeftHalf[i]}> and <@${userIdsRightHalf[i]}>! You're each other's sidekicks this week!`,
+          dmChannelId
+        );
+      }
+    );
+  }
+});
