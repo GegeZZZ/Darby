@@ -1,0 +1,8 @@
+{
+  "description": "What Darby will send when two people match on sidekicks",
+  "placeholders": ["[userOne]", "[userTwo]"],
+  "responses": [
+    "<@[userOne]>, have you met <@[userTwo]>? Probably. But you two should hang out!",
+    "HOORAY! <@[userOne]>, you are the lucky winner of this week's sidekicks with <@[userTwo]> :white_check_mark: How will you celebrate your victory??"
+  ]
+}
