@@ -5,23 +5,32 @@ const darby = require("../darby");
 const slackAction = require("../slack_action");
 const _ = require("lodash");
 
-darbyDb.getAllUserIds(_res => {
-  console.log(_res);
-  let notRes = _.shuffle(["UMX7Q9LFP", "UMZBQQ0KZ"]);
-  let userIdsLeftHalf = notRes.splice(0, notRes.length / 2);
-  let userIdsRightHalf = notRes;
+console.log("starting sidekicks");
+console.log(`DAY: ${new Date().getDay()}`);
+const today = new Date().getDay();
 
-  for (let i = 0; i < userIdsRightHalf.length; i++) {
-    slackAction.openDmWithUsers(
-      userIdsLeftHalf[i],
-      userIdsRightHalf[i],
-      dmChannelId => {
-        darby.sendSidekicksMessage(
-          userIdsLeftHalf[i],
-          userIdsRightHalf[i],
-          dmChannelId
-        );
-      }
+if (today === 1) {
+  darbyDb.getAllUserIds(res => {
+    console.log(res);
+    let shuffledUserIds = _.shuffle(res);
+    const userIdsLeftHalf = shuffledUserIds.splice(
+      0,
+      shuffledUserIds.length / 2
     );
-  }
-});
+    const userIdsRightHalf = shuffledUserIds;
+
+    for (let i = 0; i < userIdsRightHalf.length; i++) {
+      slackAction.openDmWithUsers(
+        userIdsLeftHalf[i],
+        userIdsRightHalf[i],
+        dmChannelId => {
+          darby.sendSidekicksMessage(
+            userIdsLeftHalf[i],
+            userIdsRightHalf[i],
+            dmChannelId
+          );
+        }
+      );
+    }
+  });
+}
