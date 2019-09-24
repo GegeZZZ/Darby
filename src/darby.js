@@ -108,7 +108,7 @@ function respondToPointsEvent(event) {
 function addNewUser(userId, valueToAdd, event) {
   darbyDb.addUser(userId, success => {
     if (success) {
-      slackAction.sendMessage(getNewUserResponse(userId), event.channel);
+      // slackAction.sendMessage(getNewUserResponse(userId), event.channel);
       addPointsToUser(userId, valueToAdd, event);
     }
   });
