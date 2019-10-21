@@ -214,7 +214,7 @@ function getDmMessage(userName) {
 }
 
 function getEncouragementMessage(userName) {
-  return getResponseWithReplacement(ENCOURAGEMENT_MESSAGE_RESPONSES, [userName]);
+  return getResponseWithReplacement(ENCOURAGEMENT_MESSAGE_RESPONSES, [userName.split(' ')[0]]);
 }
 
 function getSidekicksMessage(userOne, userTwo) {
