@@ -25,8 +25,11 @@ const NEW_COMMAND_RESPONSES = JSON.parse(
 const DM_MESSAGE_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/dm_message.JSON")
 );
+const ENCOURAGEMENT_MESSAGE_RESPONSES = JSON.parse(
+  fs.readFileSync("src/responses/encouragement_message.JSON")
+);
 const SIDEKICKS_RESPONSES = JSON.parse(
-  fs.readFileSync("src/responses/sidekicks.JSON")
+  fs.readFileSync("src/responses/maine_retreat_sidekicks.JSON")
 );
 
 const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*)>/;
@@ -35,6 +38,8 @@ const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/;
 const UPPERCASE_REGEX = /^[^a-z]+$/;
 const DARBY_MENTIONED_REGEX = /darby/i;
 const DM_ME_REGEX = /(^|\s)+dm\sme/i;
+const ENCOURAGE_ME_REGEX = /(^|\s)+encourage\sme/i;
+const HELP_ME_REGEX = /(^|\s)+help\sme/i;
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
@@ -53,7 +58,9 @@ const respond_to_event = event => {
     respondToAddCommandEvent(event);
   } else if (event.text.match(DM_ME_REGEX)) {
     respondToDmRequestEvent(event);
-  } else if (event.text.match(UPPERCASE_REGEX) || Math.random() < 0.02) {
+  } else if (event.text.match(ENCOURAGE_ME_REGEX) || event.text.match(HELP_ME_REGEX)) {
+    respondToEncouragementEvent(event);
+  } else if (event.text.match(UPPERCASE_REGEX) || Math.random() < 0.01) {
     respondToUppercaseEvent(event);
   }
 
@@ -70,6 +77,17 @@ function respondToDmRequestEvent(event) {
     if (channelId && userName) {
       // Send a dm message to that channel
       slackAction.sendMessage(getDmMessage(userName), channelId);
+    }
+  });
+}
+
+function respondToEncouragementEvent(event) {
+  // Get (or create) the dm channel for the user
+  darbyDb.getDmChannelForUser(event.user, (channelId, userName) => {
+    console.log(`Received channel ID ${channelId} and user name ${userName}`);
+    if (channelId && userName) {
+      // Send a dm message to that channel
+      slackAction.sendMessage(getEncouragementMessage(userName), channelId);
     }
   });
 }
@@ -193,6 +211,10 @@ function getChangeOwnRatingResponse(userId) {
 
 function getDmMessage(userName) {
   return getResponseWithReplacement(DM_MESSAGE_RESPONSES, [userName]);
+}
+
+function getEncouragementMessage(userName) {
+  return getResponseWithReplacement(ENCOURAGEMENT_MESSAGE_RESPONSES, [userName]);
 }
 
 function getSidekicksMessage(userOne, userTwo) {
