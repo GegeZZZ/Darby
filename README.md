@@ -14,6 +14,7 @@ You should be able to clone this and run `npm start`. You may need to create an 
 2. Darby can assign points to people (++ @person) and take them away (-- @person)
 3. Darby can learn things. Tell him `!prompt multi word response` and then ask him `?prompt`
 4. Darby can dm you. Simply say (anywhere) `dm me`
+5. Darby can encourage you! Simply say `help me` or `encourage me`
 
 ## TODO
 
