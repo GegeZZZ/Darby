@@ -9,7 +9,7 @@ console.log("starting sidekicks");
 console.log(`DAY: ${new Date().getDay()}`);
 const today = new Date().getDay();
 
-if (today === -55) {
+if (today === 1) {
   darbyDb.getAllUserIds(res => {
     console.log(res);
     let shuffledUserIds = _.shuffle(res);
