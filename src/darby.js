@@ -37,7 +37,7 @@ const GET_COMMAND_REGEX = /^\?([^\s]*)/;
 const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/;
 const UPPERCASE_REGEX = /^[^a-z]+$/;
 const DARBY_MENTIONED_REGEX = /darby/i;
-const DM_ME_REGEX = /(^|\s)+dm\sme/i;
+const DM_ME_REGEX = /(?:^|\s)+dm\sme/i;
 const HELP_ME_REGEX = /(?:^|\s)+(?:encourage|help)\sme/i;
 const HELP_OTHER_REGEX = /(?:^|\s)+(?:encourage|help)\s<@(.*?)>/i;
 
