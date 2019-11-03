@@ -32,14 +32,14 @@ const SIDEKICKS_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/maine_retreat_sidekicks.JSON")
 );
 
-const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*)>/;
+const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*?)>/;
 const GET_COMMAND_REGEX = /^\?([^\s]*)/;
 const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/;
 const UPPERCASE_REGEX = /^[^a-z]+$/;
 const DARBY_MENTIONED_REGEX = /darby/i;
 const DM_ME_REGEX = /(^|\s)+dm\sme/i;
-const ENCOURAGE_ME_REGEX = /(^|\s)+encourage\sme/i;
-const HELP_ME_REGEX = /(^|\s)+help\sme/i;
+const HELP_ME_REGEX = /(?:^|\s)+(?:encourage|help)\sme/i;
+const HELP_OTHER_REGEX = /(?:^|\s)+(?:encourage|help)\s<@(.*?)>/i;
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
@@ -58,8 +58,10 @@ const respond_to_event = event => {
     respondToAddCommandEvent(event);
   } else if (event.text.match(DM_ME_REGEX)) {
     respondToDmRequestEvent(event);
-  } else if (event.text.match(ENCOURAGE_ME_REGEX) || event.text.match(HELP_ME_REGEX)) {
-    respondToEncouragementEvent(event);
+  } else if (event.text.match(HELP_ME_REGEX)) {
+    respondToHelpSelfEvent(event);
+  } else if (event.text.match(HELP_OTHER_REGEX)) {
+    respondToHelpOtherEvent(event);
   } else if (event.text.match(UPPERCASE_REGEX) || Math.random() < 0.01) {
     respondToUppercaseEvent(event);
   }
@@ -81,9 +83,19 @@ function respondToDmRequestEvent(event) {
   });
 }
 
-function respondToEncouragementEvent(event) {
+function respondToHelpSelfEvent(event) {
+  encourageUser(event.user)
+}
+
+function respondToHelpOtherEvent(event) {
+  const userToEncourage = event.text.match(HELP_OTHER_REGEX)[1]
+
+  encourageUser(userToEncourage)
+}
+
+function encourageUser(userToEncourage) {
   // Get (or create) the dm channel for the user
-  darbyDb.getDmChannelForUser(event.user, (channelId, userName) => {
+  darbyDb.getDmChannelForUser(userToEncourage, (channelId, userName) => {
     console.log(`Received channel ID ${channelId} and user name ${userName}`);
     if (channelId && userName) {
       // Send a dm message to that channel
