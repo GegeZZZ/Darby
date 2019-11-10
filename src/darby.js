@@ -189,6 +189,17 @@ function respondToAddCommandEvent(event) {
   }
 }
 
+function respondToSetOddsEvent(event) {
+  const setOddsRegexMatch = event.text.match(SET_ODDS_REGEX);
+  const oddsValue = setOddsRegexMatch[1];
+
+  darbyDb.setOddsValue(event.user, (success) => {
+    let message = success ? getSetOddsResponse() : "";
+    
+    slackAction.sendMessage(message, event.channel)
+  })
+}
+
 function sendSidekicksMessage(userOne, userTwo, dmChannelId) {
   slackAction.sendMessage(getSidekicksMessage(userOne, userTwo), dmChannelId);
 }
