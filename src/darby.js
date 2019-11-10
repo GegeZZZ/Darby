@@ -40,6 +40,8 @@ const DARBY_MENTIONED_REGEX = /darby/i;
 const DM_ME_REGEX = /(?:^|\s)+dm\sme/i;
 const HELP_ME_REGEX = /(?:^|\s)+(?:encourage|help)\sme/i;
 const HELP_OTHER_REGEX = /(?:^|\s)+(?:encourage|help)\s<@(.*?)>/i;
+const INITIATE_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
+const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
@@ -64,6 +66,10 @@ const respond_to_event = event => {
     respondToHelpOtherEvent(event);
   } else if (event.text.match(UPPERCASE_REGEX) || Math.random() < 0.01) {
     respondToUppercaseEvent(event);
+  } else if (event.text.match(START_ODDS_REGEX)) {
+    respondToStartOddsEvent(event);
+  } else if (event.text.match(SET_ODDS_REGEX)) {
+    respondToSetOddsEvent(event);
   }
 
   // In ADDITION to any of those actions, we react if someone mentions darby
@@ -84,13 +90,13 @@ function respondToDmRequestEvent(event) {
 }
 
 function respondToHelpSelfEvent(event) {
-  encourageUser(event.user)
+  encourageUser(event.user);
 }
 
 function respondToHelpOtherEvent(event) {
-  const userToEncourage = event.text.match(HELP_OTHER_REGEX)[1]
+  const userToEncourage = event.text.match(HELP_OTHER_REGEX)[1];
 
-  encourageUser(userToEncourage)
+  encourageUser(userToEncourage);
 }
 
 function encourageUser(userToEncourage) {
@@ -226,7 +232,9 @@ function getDmMessage(userName) {
 }
 
 function getEncouragementMessage(userName) {
-  return getResponseWithReplacement(ENCOURAGEMENT_MESSAGE_RESPONSES, [userName.split(' ')[0]]);
+  return getResponseWithReplacement(ENCOURAGEMENT_MESSAGE_RESPONSES, [
+    userName.split(" ")[0]
+  ]);
 }
 
 function getSidekicksMessage(userOne, userTwo) {
