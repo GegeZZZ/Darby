@@ -40,11 +40,12 @@ const DARBY_MENTIONED_REGEX = /darby/i;
 const DM_ME_REGEX = /(?:^|\s)+dm\sme/i;
 const HELP_ME_REGEX = /(?:^|\s)+(?:encourage|help)\sme/i;
 const HELP_OTHER_REGEX = /(?:^|\s)+(?:encourage|help)\s<@(.*?)>/i;
-const INITIATE_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
+const START_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 
 const respond_to_event = event => {
-  console.log(`Darby sees message: ${event.text} [${event}]`);
+  console.log(`Darby sees message: ${event.text}`);
+  console.log(event)
 
   // The different types of events Darby is looking for
   // Each new type should have it's own function
