@@ -44,7 +44,7 @@ const INITIATE_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 
 const respond_to_event = event => {
-  console.log(`Darby sees message: ${event.text}`);
+  console.log(`Darby sees message: ${event.text} [${event}]`);
 
   // The different types of events Darby is looking for
   // Each new type should have it's own function
