@@ -1,0 +1,7 @@
+{
+  "description": "What Darby will send when someone sets the odds to zero in response to an odds challenge",
+  "placeholders": ["[sender]", "[receiver]", "[odds]"],
+  "responses": [
+    "<@[receiver]> has rejected <@[sender]>'s challenge! CAN YOU SAY CHICKEN???"
+  ]
+}
