@@ -31,6 +31,9 @@ const ENCOURAGEMENT_MESSAGE_RESPONSES = JSON.parse(
 const SIDEKICKS_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/maine_retreat_sidekicks.JSON")
 );
+const START_ODDS_RESPONSES = JSON.parse(
+  fs.readFileSync("src/responses/start_odds_response_messages.JSON")
+);
 
 const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*?)>/;
 const GET_COMMAND_REGEX = /^\?([^\s]*)/;
@@ -40,12 +43,12 @@ const DARBY_MENTIONED_REGEX = /darby/i;
 const DM_ME_REGEX = /(?:^|\s)+dm\sme/i;
 const HELP_ME_REGEX = /(?:^|\s)+(?:encourage|help)\sme/i;
 const HELP_OTHER_REGEX = /(?:^|\s)+(?:encourage|help)\s<@(.*?)>/i;
-const START_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
+const START_ODDS_REGEX = /^\$odds\s+<@(.*?)>\s*(.*)$/i;
 const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
-  console.log(event)
+  console.log(event);
 
   // The different types of events Darby is looking for
   // Each new type should have it's own function
@@ -190,6 +193,31 @@ function respondToAddCommandEvent(event) {
   }
 }
 
+function respondToStartOddsEvent(event) {
+  const regexMatch = event.text.match(START_ODDS_REGEX);
+  const receiver = regexMatch[1];
+  const challenge = regexMatch[2];
+  const sender = event.user;
+  const channelId = event.channel;
+
+  darbyDb.getOpenOddsRecordsForUser(receiver, oddsRecords => {
+    if (oddsRecords.length === 0) {
+      darbyDb.createOddsRecord(
+        receiver,
+        sender,
+        challenge,
+        channelId,
+        _oddsRecord => {
+          slackAction.sendMessage(
+            getStartOddsMessage(sender, receiver),
+            channelId
+          );
+        }
+      );
+    }
+  });
+}
+
 function respondToSetOddsEvent(event) {
   const setOddsRegexMatch = event.text.match(SET_ODDS_REGEX);
   const oddsValue = setOddsRegexMatch[1];
@@ -260,6 +288,10 @@ function getEncouragementMessage(userName) {
 
 function getSidekicksMessage(userOne, userTwo) {
   return getResponseWithReplacement(SIDEKICKS_RESPONSES, [userOne, userTwo]);
+}
+
+function getStartOddsMessage(sender, receiver) {
+  return getResponseWithReplacement(START_ODDS_RESPONSES, [sender, receiver]);
 }
 
 function getCapsResponse() {
