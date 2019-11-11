@@ -230,7 +230,7 @@ const createOddsRecord = (receiver, sender, challenge, channelId, callback) => {
   );
 };
 
-const setOddsValue = (recordId, oddsValue) => {
+const setOddsValue = (recordId, oddsValue, callback) => {
   darbyDb.query(
     "UPDATE `odds_records` SET `odds` = ?, `status` = ? WHERE (`id` = ?);",
     [oddsValue, "accepted", recordId],
@@ -249,7 +249,7 @@ const setOddsValue = (recordId, oddsValue) => {
 };
 
 
-const rejectOdds = (recordId) => {
+const rejectOdds = (recordId, callback) => {
   darbyDb.query(
     "UPDATE `odds_records` SET `odds` = ?, `status` = ? WHERE (`id` = ?);",
     [0, "rejected", recordId],
@@ -280,5 +280,6 @@ module.exports = {
   getAllUserIds: getAllUserIds,
   getOpenOddsRecordsForUser: getOpenOddsRecordsForUser,
   createOddsRecord: createOddsRecord,
-  setOddsValue: setOddsValue
+  setOddsValue: setOddsValue,
+  rejectOdds: rejectOdds
 };

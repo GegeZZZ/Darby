@@ -32,7 +32,16 @@ const SIDEKICKS_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/maine_retreat_sidekicks.JSON")
 );
 const START_ODDS_RESPONSES = JSON.parse(
-  fs.readFileSync("src/responses/start_odds_response_messages.JSON")
+  fs.readFileSync("src/responses/odds_start_odds.JSON")
+);
+const REJECT_ODDS_RESPONSES = JSON.parse(
+  fs.readFileSync("src/responses/odds_rejected.JSON")
+);
+const SET_ODDS_RESPONSES = JSON.parse(
+  fs.readFileSync("src/responses/odds_set_odds.JSON")
+);
+const ALREADY_PLAYING_ODDS_RESPONSES = JSON.parse(
+  fs.readFileSync("src/responses/odds_already_playing.JSON")
 );
 
 const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*?)>/;
@@ -214,14 +223,16 @@ function respondToStartOddsEvent(event) {
           );
         }
       );
+    } else{
+      slackAction.sendMessage(getAlreadyPlayingOddsMessage(sender, receiver, oddsRecords[0].challenge), channelId);
     }
   });
 }
 
 function respondToSetOddsEvent(event) {
   const setOddsRegexMatch = event.text.match(SET_ODDS_REGEX);
-  const oddsValue = setOddsRegexMatch[1];
-  const userId = user.id;
+  const oddsValue = parseInt(setOddsRegexMatch[1]);
+  const userId = event.user;
 
   darbyDb.getOpenOddsRecordsForUser(userId, (records) => {
     const record = records[0];
@@ -231,14 +242,16 @@ function respondToSetOddsEvent(event) {
       return;
     }
 
+    const sender = record.challenger_id;
+
     if (oddsValue === 0) { 
       darbyDb.rejectOdds(record.id, (success) => {
-        message = success ? getRejectedOddsResponse() : "UNABLE TO REJECT ODDS. PLEASE TRY AGAIN LATER.";
+        const message = success ? getRejectOddsMessage(sender, userId) : "UNABLE TO REJECT ODDS. PLEASE TRY AGAIN LATER.";
         slackAction.sendMessage(message, record.channel_id)
       })
     } else {
       darbyDb.setOddsValue(record.id, oddsValue, (success) => {
-        message = success ? getSetOddsResponse() : "UNABLE TO SET ODDS VALUE. PLEASE TRY AGAIN.";
+        const message = success ? getSetOddsMessage(sender, userId, oddsValue) : "UNABLE TO SET ODDS VALUE. PLEASE TRY AGAIN.";
         slackAction.sendMessage(message, record.channel_id);
       })
     }
@@ -299,6 +312,18 @@ function getSidekicksMessage(userOne, userTwo) {
 
 function getStartOddsMessage(sender, receiver) {
   return getResponseWithReplacement(START_ODDS_RESPONSES, [sender, receiver]);
+}
+
+function getSetOddsMessage(sender, receiver, odds) {
+  return getResponseWithReplacement(SET_ODDS_RESPONSES, [sender, receiver, odds]);
+}
+
+function getRejectOddsMessage(sender, receiver) {
+  return getResponseWithReplacement(REJECT_ODDS_RESPONSES, [sender, receiver]);
+}
+
+function getAlreadyPlayingOddsMessage(sender, receiver, challenge) {
+  return getResponseWithReplacement(ALREADY_PLAYING_ODDS_RESPONSES, [sender, receiver, challenge]);
 }
 
 function getCapsResponse() {
