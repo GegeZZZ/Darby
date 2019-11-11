@@ -2,6 +2,6 @@
   "description": "What Darby will send when someone challenges someone else to a game of odds",
   "placeholders": ["[sender]", "[receiver]"],
   "responses": [
-    "OMmmGOMGOMGOMG <@[sender]> has officially challenged <@[receiver]> to ODDS!!!!?!!! Will <@[receiver]> accept? Will <@[sender]> get a reverse thrown at him? Stay tuned and find out."
+    "Alright. <@[sender]> has officially challenged <@[receiver]> to ODDS. To accept, reply `$odds [whatever odds you feelin']`."
   ]
 }
