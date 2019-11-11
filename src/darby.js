@@ -48,6 +48,7 @@ const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
+  console.log(event);
 
   // The different types of events Darby is looking for
   // Each new type should have it's own function
@@ -214,6 +215,17 @@ function respondToStartOddsEvent(event) {
         }
       );
     }
+  });
+}
+
+function respondToSetOddsEvent(event) {
+  const setOddsRegexMatch = event.text.match(SET_ODDS_REGEX);
+  const oddsValue = setOddsRegexMatch[1];
+
+  darbyDb.setOddsValue(event.user, success => {
+    let message = success ? getSetOddsResponse() : "";
+
+    slackAction.sendMessage(message, event.channel);
   });
 }
 
