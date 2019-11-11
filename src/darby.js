@@ -35,7 +35,7 @@ const SIDEKICKS_RESPONSES = JSON.parse(
 const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*?)>/;
 const GET_COMMAND_REGEX = /^\?([^\s]*)/;
 const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/;
-const UPPERCASE_REGEX = /^[^a-z]+$/;
+const UPPERCASE_REGEX = /^[^a-z]{5,}$/;
 const DARBY_MENTIONED_REGEX = /darby/i;
 const DM_ME_REGEX = /(?:^|\s)+dm\sme/i;
 const HELP_ME_REGEX = /(?:^|\s)+(?:encourage|help)\sme/i;
@@ -193,11 +193,20 @@ function respondToAddCommandEvent(event) {
 function respondToSetOddsEvent(event) {
   const setOddsRegexMatch = event.text.match(SET_ODDS_REGEX);
   const oddsValue = setOddsRegexMatch[1];
+  const userId = user.id;
 
-  darbyDb.setOddsValue(event.user, (success) => {
-    let message = success ? getSetOddsResponse() : "";
-    
-    slackAction.sendMessage(message, event.channel)
+  darbyDb.getOpenOddsForUser(userId, (record) => {
+    let message = "UNABLE TO FIND ODDS RECORD. PLEASE RETRY CREATING ODDS.";
+    let channel = event.channel;
+
+    if (record !== null){
+      darbyDb.setOddsValue(userId, oddsValue, (success) => {
+        channel = record.channel_id
+        message = success ? getSetOddsResponse() : "UNABLE TO SET ODDS VALUE. PLEASE TRY AGAIN.";
+      })
+    }
+
+    slackAction.sendMessage(message, channel)
   })
 }
 
