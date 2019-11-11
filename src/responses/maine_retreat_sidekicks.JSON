@@ -1,13 +1,12 @@
 {
-    "description": "What Darby will send when two people match on sidekicks for the Maine Retreat",
-    "placeholders": ["[userOne]", "[userTwo]"],
-    "responses": [
-      "The Maine Retreat is coming up, <@[userOne]> & <@[userTwo]>! :evergreen_tree: :mountain: You two should do a fun activity together on the retreat! How about a hike?",
-      ":evergreen_tree: :canoe: I'm stoked for the Maine Retreat. <@[userOne]> will you hang out with <@[userTwo]> and do something fun together? How about going canoeing?",
-      "The Maine Retreat is the perfect spot to get to know each other better, <@[userOne]> and <@[userTwo]>! :feet: :maple_leaf: Maybe an early-morning walk?",
-      ":maple_leaf: I love the Maine Retreat. :heart: :mountain: <@[userOne]>, please organize something fun with <@[userTwo]> for the retreat! I'll venmo you each a dollar if you both jump in the lake. :swimmer:",
-      ":evergreen_tree: The Maine Retreat is coming up! On the retreat, you two should get to know each other. Maybe <@[userOne]> can teach a cool card game to <@[userTwo]>? Or just get coffee :coffee:",
-      "Apparently if you do work over the whole Maine Retreat, you get thrown in the lake. :x: :computer:  Instead of that, why doesn't <@[userOne]> hang out with <@[userTwo]>. How about a sunset walk? :maple_leaf:"
-    ]
-  }
-  
+  "description": "What Darby will send when two people match on sidekicks for the Maine Retreat",
+  "placeholders": ["[userOne]", "[userTwo]"],
+  "responses": [
+    "The Maine Retreat is coming up, <@[userOne]> & <@[userTwo]>! :evergreen_tree: :mountain: You two should do a fun activity together on the retreat! How about a hike?",
+    ":evergreen_tree: :canoe: I'm stoked for the Maine Retreat. <@[userOne]> will you hang out with <@[userTwo]> and do something fun together? How about going canoeing?",
+    "The Maine Retreat is the perfect spot to get to know each other better, <@[userOne]> and <@[userTwo]>! :feet: :maple_leaf: Maybe an early-morning walk?",
+    ":maple_leaf: I love the Maine Retreat. :heart: :mountain: <@[userOne]>, please organize something fun with <@[userTwo]> for the retreat! I'll venmo you each a dollar if you both jump in the lake. :swimmer:",
+    ":evergreen_tree: The Maine Retreat is coming up! On the retreat, you two should get to know each other. Maybe <@[userOne]> can teach a cool card game to <@[userTwo]>? Or just get coffee :coffee:",
+    "Apparently if you do work over the whole Maine Retreat, you get thrown in the lake. :x: :computer:  Instead of that, why doesn't <@[userOne]> hang out with <@[userTwo]>. How about a sunset walk? :maple_leaf:"
+  ]
+}

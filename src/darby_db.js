@@ -196,6 +196,40 @@ const getAllUserIds = callback => {
   });
 };
 
+const getOpenOddsRecordsForUser = (userId, callback) => {
+  darbyDb.query(
+    "SELECT `*` FROM `odds_records` WHERE `receiver_id` = ?;",
+    [userId],
+    function(err, rows) {
+      console.log("this.sql", this.sql);
+      if (err) {
+        console.log(err);
+        return callback(null);
+      }
+
+      return callback(rows);
+    }
+  );
+};
+
+const createOddsRecord = (receiver, sender, challenge, channelId, callback) => {
+  darbyDb.query(
+    "INSERT INTO `odds_records` (`receiver_id`, `challenger_id`, `challenge`, `channel_id`) VALUES (?, ?, ?, ?);",
+    [receiver, sender, challenge, channelId],
+    function(err, res) {
+      console.log("this.sql", this.sql);
+
+      if (err) {
+        console.log(`Unable to add odds record (error: ${err})`);
+        return callback(null);
+      }
+
+      console.log(`Successfully added odds record ${res.id}`);
+      return callback(res);
+    }
+  );
+};
+
 module.exports = {
   addUser: addUser,
   userExists: userExists,
@@ -206,5 +240,7 @@ module.exports = {
   usersTableFull: usersTableFull,
   fillUsersTable: fillUsersTable,
   getDmChannelForUser: getDmChannelForUser,
-  getAllUserIds: getAllUserIds
+  getAllUserIds: getAllUserIds,
+  getOpenOddsRecordsForUser: getOpenOddsRecordsForUser,
+  createOddsRecord: createOddsRecord
 };
