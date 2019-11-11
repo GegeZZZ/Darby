@@ -198,8 +198,8 @@ const getAllUserIds = callback => {
 
 const getOpenOddsRecordsForUser = (userId, callback) => {
   darbyDb.query(
-    "SELECT `*` FROM `odds_records` WHERE `receiver_id` = ?;",
-    [userId],
+    "SELECT `*` FROM `odds_records` WHERE `status` not in (?, ?) AND `receiver_id` = ?;",
+    ["completed", "rejected", userId],
     function(err, rows) {
       console.log("this.sql", this.sql);
       if (err) {
@@ -214,8 +214,8 @@ const getOpenOddsRecordsForUser = (userId, callback) => {
 
 const createOddsRecord = (receiver, sender, challenge, channelId, callback) => {
   darbyDb.query(
-    "INSERT INTO `odds_records` (`receiver_id`, `challenger_id`, `challenge`, `channel_id`) VALUES (?, ?, ?, ?);",
-    [receiver, sender, challenge, channelId],
+    "INSERT INTO `odds_records` (`receiver_id`, `challenger_id`, `challenge`, `channel_id`, `status`) VALUES (?, ?, ?, ?, ?);",
+    [receiver, sender, challenge, channelId, "open"],
     function(err, res) {
       console.log("this.sql", this.sql);
 
@@ -226,6 +226,43 @@ const createOddsRecord = (receiver, sender, challenge, channelId, callback) => {
 
       console.log(`Successfully added odds record ${res.id}`);
       return callback(res);
+    }
+  );
+};
+
+const setOddsValue = (recordId, oddsValue) => {
+  darbyDb.query(
+    "UPDATE `odds_records` SET `odds` = ?, `status` = ? WHERE (`id` = ?);",
+    [oddsValue, "accepted", recordId],
+    function(err, res) {
+      console.log("this.sql", this.sql);
+
+      if (err) {
+        console.log(`Unable to set odds value for id ${recordID} (error: ${err})`);
+        return callback(false);
+      }
+
+      console.log(`Successfully added odds record for id ${recordId}`);
+      return callback(true);
+    }
+  );
+};
+
+
+const rejectOdds = (recordId) => {
+  darbyDb.query(
+    "UPDATE `odds_records` SET `odds` = ?, `status` = ? WHERE (`id` = ?);",
+    [0, "rejected", recordId],
+    function(err, res) {
+      console.log("this.sql", this.sql);
+
+      if (err) {
+        console.log(`Unable to reject odds for id ${recordID} (error: ${err})`);
+        return callback(false);
+      }
+
+      console.log(`Successfully rejected odds for id ${recordId}`);
+      return callback(true);
     }
   );
 };
@@ -242,5 +279,6 @@ module.exports = {
   getDmChannelForUser: getDmChannelForUser,
   getAllUserIds: getAllUserIds,
   getOpenOddsRecordsForUser: getOpenOddsRecordsForUser,
-  createOddsRecord: createOddsRecord
+  createOddsRecord: createOddsRecord,
+  setOddsValue: setOddsValue
 };

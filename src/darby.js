@@ -223,18 +223,25 @@ function respondToSetOddsEvent(event) {
   const oddsValue = setOddsRegexMatch[1];
   const userId = user.id;
 
-  darbyDb.getOpenOddsForUser(userId, (record) => {
-    let message = "UNABLE TO FIND ODDS RECORD. PLEASE RETRY CREATING ODDS.";
-    let channel = event.channel;
+  darbyDb.getOpenOddsRecordsForUser(userId, (records) => {
+    const record = records[0];
 
-    if (record !== null){
-      darbyDb.setOddsValue(userId, oddsValue, (success) => {
-        channel = record.channel_id
-        message = success ? getSetOddsResponse() : "UNABLE TO SET ODDS VALUE. PLEASE TRY AGAIN.";
-      })
+    if (record === null){
+      slackAction.sendMessage("Error finding odds record. Please try oddsing again.", event.channel)
+      return;
     }
 
-    slackAction.sendMessage(message, channel)
+    if (oddsValue === 0) { 
+      darbyDb.rejectOdds(record.id, (success) => {
+        message = success ? getRejectedOddsResponse() : "UNABLE TO REJECT ODDS. PLEASE TRY AGAIN LATER.";
+        slackAction.sendMessage(message, record.channel_id)
+      })
+    } else {
+      darbyDb.setOddsValue(record.id, oddsValue, (success) => {
+        message = success ? getSetOddsResponse() : "UNABLE TO SET ODDS VALUE. PLEASE TRY AGAIN.";
+        slackAction.sendMessage(message, record.channel_id);
+      })
+    }
   })
 }
 
