@@ -1,0 +1,7 @@
+{
+  "description": "What Darby will send when someone challenges someone else to a game of odds but the person challenged is already playing",
+  "placeholders": ["[sender]", "[receiver]", "[challenge]"],
+  "responses": [
+    "Sorry <@[sender]>, <@[receiver]> has already been challenged to [challenge]. Try again once they're done with that."
+  ]
+}
