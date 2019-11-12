@@ -40,14 +40,15 @@ const SET_ODDS_RESPONSES = JSON.parse(
 const ALREADY_PLAYING_ODDS_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/odds_already_playing.JSON")
 );
-
 const DM_FOR_ODDS_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/dm_for_odds_play.JSON")
 );
-
 const ODDS_MATCH_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/odds_match_responses.JSON")
 );
+const DB_QUOTES = JSON.parse(
+  fs.readFileSync("src/responses/db_quotes.JSON")
+)
 
 const ODDS_MISMATCH_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/odds_mismatch_responses.JSON")
@@ -64,6 +65,7 @@ const HELP_OTHER_REGEX = /(?:^|\s)+(?:encourage|help)\s<@(.*?)>/i;
 const START_ODDS_REGEX = /^\$odds\s+<@(.*?)>\s*(.*)$/i;
 const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 const PLAY_ODDS_REGEX = /^[0-9]+$/;
+const DB_QUOTE_REGEX = /^db quote$/i;
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
@@ -95,6 +97,8 @@ const respond_to_event = event => {
     respondToSetOddsEvent(event);
   } else if (event.text.match(PLAY_ODDS_REGEX)) {
     respondToOddsPlayEvent(event);
+  } else if (event.text.match(DB_QUOTE_REGEX)) {
+    respondToDbQuoteEvent(event);
   }
 
   // In ADDITION to any of those actions, we react if someone mentions darby
@@ -368,6 +372,15 @@ function respondToSetOddsEvent(event) {
   });
 }
 
+function respondToDbQuoteEvent(event) {
+  // If the message is coming from Darby, ignore it
+  if (event.bot_id) {
+    return;
+  }
+
+  slackAction.sendMessage(getDbQuote(), event.channel);
+}
+
 function sendSidekicksMessage(userOne, userTwo, dmChannelId) {
   slackAction.sendMessage(getSidekicksMessage(userOne, userTwo), dmChannelId);
 }
@@ -454,6 +467,10 @@ function getAlreadyPlayingOddsMessage(sender, receiver, challenge) {
 
 function getCapsResponse() {
   return _.sample(CAPS_RESPONSES.responses);
+}
+
+function getDbQuote() {
+  return _.sample(DB_QUOTES.responses);
 }
 
 function getAddedCommandResponse(command) {
