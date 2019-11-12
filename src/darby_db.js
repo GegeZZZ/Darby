@@ -198,8 +198,8 @@ const getAllUserIds = callback => {
 
 const getOpenOddsRecordsForUser = (userId, callback) => {
   darbyDb.query(
-    "SELECT `*` FROM `odds_records` WHERE `status` not in (?, ?) AND `receiver_id` = ?;",
-    ["completed", "rejected", userId],
+    "SELECT `*` FROM `odds_records` WHERE `status` in (?, ?) AND `receiver_id` = ?;",
+    ["accepted", "open", userId],
     function(err, rows) {
       console.log("this.sql", this.sql);
       if (err) {
@@ -212,10 +212,10 @@ const getOpenOddsRecordsForUser = (userId, callback) => {
   );
 };
 
-const getOldestPendingOddsRecordForUser = (userId, callback) => {
+const getOldestAcceptedOddsRecordForUser = (userId, callback) => {
   darbyDb.query(
     "SELECT `*` FROM `odds_records` WHERE `status` = ? AND (`receiver_id` = ? OR `challenger_id` = ?);",
-    ["pending", userId, userId],
+    ["accepted", userId, userId],
     function(err, rows) {
       console.log("this.sql", this.sql);
       if (err) {
@@ -284,10 +284,10 @@ const rejectOdds = (recordId, callback) => {
   );
 };
 
-const updateChallengerPlayValue = (recordId, playValue, callback) => {
+const updateChallengerGuess = (recordId, guess, callback) => {
   darbyDb.query(
-    "UPDATE `odds_records` SET `challenger_play_value` = ? WHERE (`id` = ?);",
-    [playValue, recordId],
+    "UPDATE `odds_records` SET `challenger_guess` = ? WHERE (`id` = ?);",
+    [guess, recordId],
     function(err, res) {
       console.log("this.sql", this.sql);
 
@@ -295,21 +295,21 @@ const updateChallengerPlayValue = (recordId, playValue, callback) => {
         console.log(
           `Unable to set the challenger play value for id ${recordID} (error: ${err})`
         );
-        return callback(false);
+        return callback(false, null);
       }
 
       console.log(
         `Successfully set the challenger play value for id ${recordId}`
       );
-      return callback(true);
+      return callback(true, res);
     }
   );
 };
 
-const updateReceiverPlayValue = (recordId, playValue, callback) => {
+const updateReceiverGuess = (recordId, guess, callback) => {
   darbyDb.query(
-    "UPDATE `odds_records` SET `receiver_play_value` = ? WHERE (`id` = ?);",
-    [playValue, recordId],
+    "UPDATE `odds_records` SET `receiver_guess` = ? WHERE (`id` = ?);",
+    [guess, recordId],
     function(err, res) {
       console.log("this.sql", this.sql);
 
@@ -317,13 +317,13 @@ const updateReceiverPlayValue = (recordId, playValue, callback) => {
         console.log(
           `Unable to set the receiver play value for id ${recordID} (error: ${err})`
         );
-        return callback(false);
+        return callback(false, null);
       }
 
       console.log(
         `Successfully set the receiver play value for id ${recordId}`
       );
-      return callback(true);
+      return callback(true, res);
     }
   );
 };
@@ -361,8 +361,8 @@ module.exports = {
   createOddsRecord: createOddsRecord,
   setOddsValue: setOddsValue,
   rejectOdds: rejectOdds,
-  getOldestPendingOddsRecordForUser: getOldestPendingOddsRecordForUser,
-  updateChallengerPlayValue: updateChallengerPlayValue,
-  updateReceiverPlayValue: updateReceiverPlayValue,
+  getOldestAcceptedOddsRecordForUser: getOldestAcceptedOddsRecordForUser,
+  updateChallengerGuess: updateChallengerGuess,
+  updateReceiverGuess: updateReceiverGuess,
   setOddsGameStatus: setOddsGameStatus
 };

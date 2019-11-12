@@ -15,6 +15,8 @@ You should be able to clone this and run `npm start`. You may need to create an 
 3. Darby can learn things. Tell him `!prompt multi word response` and then ask him `?prompt`
 4. Darby can dm you. Simply say (anywhere) `dm me`
 5. Darby can encourage you! Simply say `help me` or `encourage me`
+6. Darby can send you quotes from Prof. Bertsimas `db quote`
+7. Darby can facilitate a game of odds! `$odds @person go eat a banana` to start.
 
 ## TODO
 

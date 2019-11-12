@@ -224,6 +224,13 @@ function respondToStartOddsEvent(event) {
   const sender = event.user;
   const channelId = event.channel;
 
+  if (receiver === sender) {
+    slackAction.sendMessage(
+      "Try choosing a friend to play with you.",
+      channelId
+    );
+  }
+
   darbyDb.getOpenOddsRecordsForUser(receiver, oddsRecords => {
     if (oddsRecords.length === 0) {
       darbyDb.createOddsRecord(
@@ -257,59 +264,52 @@ function respondToOddsPlayEvent(event) {
   }
 
   const userId = event.user;
-  const oddsPlayValue = event.text.match(PLAY_ODDS_REGEX)[0];
+  const oddsGuess = event.text.match(PLAY_ODDS_REGEX)[0];
 
-  darbyDb.getOldestPendingOddsRecordForUser(userId, record => {
-    if (record === null) {
+  darbyDb.getOldestAcceptedOddsRecordForUser(userId, record => {
+    if (!record) {
       return;
     }
 
-    if (oddsPlayValue > record.odds || oddsPlayValue < 1) {
+    if (oddsGuess > record.odds || oddsGuess < 1) {
       slackAction.sendMessage(
-        `You're outside the range (1 to ${oddsPlayValue}). Try again`,
+        `You're outside the range (1 to ${record.odds}). Try again`,
         event.channel
       );
+      return;
     }
 
     if (record.challenger_id === userId) {
-      darbyDb.updateChallengerPlayValue(record.id, oddsPlayValue, success => {
-        if (success && record.receiver_play_value) {
-          finishOddsGame(record)
+      darbyDb.updateChallengerGuess(record.id, oddsGuess, (success, updatedRecord) => {
+        if (success && record.receiver_guess) {
+          finishOddsGame(updatedRecord)
         }
       })
     } else {
-      darbyDb.updateReceiverPlayValue(record.id, oddsPlayValue, success => {
-        if (success && record.challenger_play_value) {
-          finishOddsGame(record)
+      darbyDb.updateReceiverGuess(record.id, oddsGuess, (success, updatedRecord) => {
+        if (success && record.challenger_guess) {
+          finishOddsGame(updatedRecord)
         }
       })
-    }
-
-    const sender = record.challenger_id;
-
-    if (oddsValue === 0) {
-      darbyDb.rejectOdds(record.id, success => {
-        const message = success
-          ? getRejectOddsMessage(sender, userId)
-          : "UNABLE TO REJECT ODDS. PLEASE TRY AGAIN LATER.";
-        slackAction.sendMessage(message, record.channel_id);
-      });
     }
   });
 }
 
 function finishOddsGame(record) {
-  if (record.receiver_play_value === record.challenger_play_value) {
-    darbyDb.setGameStatus('match', success => {
+  console.log(`Finished an odds game with record:`)
+  console.log(record)
+
+  if (record.receiver_guess === record.challenger_guess) {
+    darbyDb.setGameStatus('done_and_matched', success => {
       if (success) {
-        const message = getOddsMatchMessage(record.challenger_id, record.receiver_id, record.odds)
+        const message = getOddsMatchMessage(record.challenger_id, record.receiver_id, record.challenge)
         slackAction.sendMessage(message, record.channel_id);
       }
     })
   } else {
-    darbyDb.setOddsGameStatus(record.id, 'mismatch', success => {
+    darbyDb.setOddsGameStatus(record.id, 'done_and_mismatched', success => {
       if (success) {
-        const message = getOddsMismatchMessage(record.challenger_id, record.receiver_id, record.odds)
+        const message = getOddsMismatchMessage(record.challenger_id, record.receiver_id, record.challenge)
         slackAction.sendMessage(message, record.channel_id);
       }
     })
@@ -324,7 +324,7 @@ function respondToSetOddsEvent(event) {
   darbyDb.getOpenOddsRecordsForUser(userId, records => {
     const record = records[0];
 
-    if (record === null) {
+    if (!record) {
       slackAction.sendMessage(
         "Error finding odds record. Please try oddsing again.",
         event.channel
@@ -441,12 +441,12 @@ function getSetOddsMessage(sender, receiver, odds) {
   ]);
 }
 
-function getOddsMatchMessage(challenger, receiver, odds) {
-  return getResponseWithReplacement(ODDS_MATCH_RESPONSES, [challenger, receiver, odds])
+function getOddsMatchMessage(challenger, receiver, oddsPrompt) {
+  return getResponseWithReplacement(ODDS_MATCH_RESPONSES, [challenger, receiver, oddsPrompt])
 }
 
-function getOddsMismatchMessage(challenger, receiver, odds) {
-  return getResponseWithReplacement(ODDS_MISMATCH_RESPONSES, [challenger, receiver, odds])
+function getOddsMismatchMessage(challenger, receiver, oddsPrompt) {
+  return getResponseWithReplacement(ODDS_MISMATCH_RESPONSES, [challenger, receiver, oddsPrompt])
 }
 
 function getDmForOddsMessage(oddsValue) {
