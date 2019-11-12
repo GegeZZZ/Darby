@@ -2,6 +2,6 @@
   "description": "What Darby will send an odds challenge results in a match",
   "placeholders": ["[challenger]", "[receiver]", "[odds]"],
   "responses": [
-    "<@[challenger]>, <@[receiver]>  - great minds think alike. It's a match."
+    "Great minds think alike - it's a match! <@[challenger]> challenged <@[receiver]> to '[odds]'. Now do it!" 
   ]
 }
