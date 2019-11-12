@@ -1,0 +1,7 @@
+{
+  "description": "What Darby will send an odds challenge results in a mismatch",
+  "placeholders": ["[challenger]", "[receiver]", "[odds]"],
+  "responses": [
+    "Breath a sigh of relief, <@[receiver]>  - the odds gods have decided. It's not a match."
+  ]
+}

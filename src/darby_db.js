@@ -212,6 +212,22 @@ const getOpenOddsRecordsForUser = (userId, callback) => {
   );
 };
 
+const getOldestPendingOddsRecordForUser = (userId, callback) => {
+  darbyDb.query(
+    "SELECT `*` FROM `odds_records` WHERE `status` = ? AND `receiver_id` = ? OR `challenger_id` = ?;",
+    ["pending", userId, userId],
+    function(err, rows) {
+      console.log("this.sql", this.sql);
+      if (err) {
+        console.log(err);
+        return callback(null);
+      }
+
+      return callback(rows[0]);
+    }
+  );
+};
+
 const createOddsRecord = (receiver, sender, challenge, channelId, callback) => {
   darbyDb.query(
     "INSERT INTO `odds_records` (`receiver_id`, `challenger_id`, `challenge`, `channel_id`, `status`) VALUES (?, ?, ?, ?, ?);",
@@ -238,7 +254,9 @@ const setOddsValue = (recordId, oddsValue, callback) => {
       console.log("this.sql", this.sql);
 
       if (err) {
-        console.log(`Unable to set odds value for id ${recordID} (error: ${err})`);
+        console.log(
+          `Unable to set odds value for id ${recordID} (error: ${err})`
+        );
         return callback(false);
       }
 
@@ -247,7 +265,6 @@ const setOddsValue = (recordId, oddsValue, callback) => {
     }
   );
 };
-
 
 const rejectOdds = (recordId, callback) => {
   darbyDb.query(
@@ -267,6 +284,68 @@ const rejectOdds = (recordId, callback) => {
   );
 };
 
+const updateChallengerPlayValue = (recordId, playValue, callback) => {
+  darbyDb.query(
+    "UPDATE `odds_records` SET `challenger_play_value` = ? WHERE (`id` = ?);",
+    [playValue, recordId],
+    function(err, res) {
+      console.log("this.sql", this.sql);
+
+      if (err) {
+        console.log(
+          `Unable to set the challenger play value for id ${recordID} (error: ${err})`
+        );
+        return callback(false);
+      }
+
+      console.log(
+        `Successfully set the challenger play value for id ${recordId}`
+      );
+      return callback(true);
+    }
+  );
+};
+
+const updateReceiverPlayValue = (recordId, playValue, callback) => {
+  darbyDb.query(
+    "UPDATE `odds_records` SET `receiver_play_value` = ? WHERE (`id` = ?);",
+    [playValue, recordId],
+    function(err, res) {
+      console.log("this.sql", this.sql);
+
+      if (err) {
+        console.log(
+          `Unable to set the receiver play value for id ${recordID} (error: ${err})`
+        );
+        return callback(false);
+      }
+
+      console.log(
+        `Successfully set the receiver play value for id ${recordId}`
+      );
+      return callback(true);
+    }
+  );
+};
+
+const setOddsGameStatus = (recordId, status, callback) => {
+  darbyDb.query(
+    "UPDATE `odds_records` SET `status` = ? WHERE (`id` = ?);",
+    [status, recordId],
+    function(err, res) {
+      console.log("this.sql", this.sql);
+
+      if (err) {
+        console.log(`Unable to set the status for ${recordID} (error: ${err})`);
+        return callback(false);
+      }
+
+      console.log(`Successfully set the status for id ${recordId}`);
+      return callback(true);
+    }
+  );
+};
+
 module.exports = {
   addUser: addUser,
   userExists: userExists,
@@ -281,5 +360,9 @@ module.exports = {
   getOpenOddsRecordsForUser: getOpenOddsRecordsForUser,
   createOddsRecord: createOddsRecord,
   setOddsValue: setOddsValue,
-  rejectOdds: rejectOdds
+  rejectOdds: rejectOdds,
+  getOldestPendingOddsRecordForUser: getOldestPendingOddsRecordForUser,
+  updateChallengerPlayValue: updateChallengerPlayValue,
+  updateReceiverPlayValue: updateReceiverPlayValue,
+  setOddsGameStatus: setOddsGameStatus
 };
