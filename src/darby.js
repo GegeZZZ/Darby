@@ -44,6 +44,10 @@ const ALREADY_PLAYING_ODDS_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/odds_already_playing.JSON")
 );
 
+const DM_FOR_ODDS_RESPONSES = JSON.parse(
+  fs.readFileSync("src/responses/dm_for_odds_play.JSON")
+);
+
 const GIVE_POINTS_REGEX = /^(\+\+|--)\s*<@(.*?)>/;
 const GET_COMMAND_REGEX = /^\?([^\s]*)/;
 const ADD_COMMAND_REGEX = /^!([^\s]*)\s*(.*$)/;
@@ -223,8 +227,15 @@ function respondToStartOddsEvent(event) {
           );
         }
       );
-    } else{
-      slackAction.sendMessage(getAlreadyPlayingOddsMessage(sender, receiver, oddsRecords[0].challenge), channelId);
+    } else {
+      slackAction.sendMessage(
+        getAlreadyPlayingOddsMessage(
+          sender,
+          receiver,
+          oddsRecords[0].challenge
+        ),
+        channelId
+      );
     }
   });
 }
@@ -234,28 +245,55 @@ function respondToSetOddsEvent(event) {
   const oddsValue = parseInt(setOddsRegexMatch[1]);
   const userId = event.user;
 
-  darbyDb.getOpenOddsRecordsForUser(userId, (records) => {
+  darbyDb.getOpenOddsRecordsForUser(userId, records => {
     const record = records[0];
 
-    if (record === null){
-      slackAction.sendMessage("Error finding odds record. Please try oddsing again.", event.channel)
+    if (record === null) {
+      slackAction.sendMessage(
+        "Error finding odds record. Please try oddsing again.",
+        event.channel
+      );
       return;
     }
 
     const sender = record.challenger_id;
 
-    if (oddsValue === 0) { 
-      darbyDb.rejectOdds(record.id, (success) => {
-        const message = success ? getRejectOddsMessage(sender, userId) : "UNABLE TO REJECT ODDS. PLEASE TRY AGAIN LATER.";
-        slackAction.sendMessage(message, record.channel_id)
-      })
-    } else {
-      darbyDb.setOddsValue(record.id, oddsValue, (success) => {
-        const message = success ? getSetOddsMessage(sender, userId, oddsValue) : "UNABLE TO SET ODDS VALUE. PLEASE TRY AGAIN.";
+    if (oddsValue === 0) {
+      darbyDb.rejectOdds(record.id, success => {
+        const message = success
+          ? getRejectOddsMessage(sender, userId)
+          : "UNABLE TO REJECT ODDS. PLEASE TRY AGAIN LATER.";
         slackAction.sendMessage(message, record.channel_id);
-      })
+      });
+    } else {
+      darbyDb.setOddsValue(record.id, oddsValue, success => {
+        if (!success) {
+          slackAction.sendMessage(
+            "UNABLE TO SET ODDS VALUE. PLEASE TRY AGAIN.",
+            record.channel_id
+          );
+          return;
+        }
+
+        const publicChannelAnnouncement = getSetOddsMessage(
+          sender,
+          userId,
+          oddsValue
+        );
+
+        const privateDmForOddsValue = getDmForOddsMessage(oddsValue);
+        slackAction.sendMessage(publicChannelAnnouncement, record.channel_id);
+
+        darbyDb.getDmChannelForUser(record.challenger_id, channelId => {
+          slackAction.sendMessage(privateDmForOddsValue, channelId);
+        });
+
+        darbyDb.getDmChannelForUser(record.receiver_id, channelId => {
+          slackAction.sendMessage(privateDmForOddsValue, channelId);
+        });
+      });
     }
-  })
+  });
 }
 
 function sendSidekicksMessage(userOne, userTwo, dmChannelId) {
@@ -315,7 +353,15 @@ function getStartOddsMessage(sender, receiver) {
 }
 
 function getSetOddsMessage(sender, receiver, odds) {
-  return getResponseWithReplacement(SET_ODDS_RESPONSES, [sender, receiver, odds]);
+  return getResponseWithReplacement(SET_ODDS_RESPONSES, [
+    sender,
+    receiver,
+    odds
+  ]);
+}
+
+function getDmForOddsMessage(oddsValue) {
+  return getResponseWithReplacement(DM_FOR_ODDS_RESPONSES, [oddsValue]);
 }
 
 function getRejectOddsMessage(sender, receiver) {
@@ -323,7 +369,11 @@ function getRejectOddsMessage(sender, receiver) {
 }
 
 function getAlreadyPlayingOddsMessage(sender, receiver, challenge) {
-  return getResponseWithReplacement(ALREADY_PLAYING_ODDS_RESPONSES, [sender, receiver, challenge]);
+  return getResponseWithReplacement(ALREADY_PLAYING_ODDS_RESPONSES, [
+    sender,
+    receiver,
+    challenge
+  ]);
 }
 
 function getCapsResponse() {

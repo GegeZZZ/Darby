@@ -1,0 +1,7 @@
+{
+  "description": "What Darby will DM participants of an odds game to ask for their number",
+  "placeholders": ["[oddsValue]"],
+  "responses": [
+    "Reply with a number between 1 and [oddsValue]. May the odds be ever in your favour!"
+  ]
+}
