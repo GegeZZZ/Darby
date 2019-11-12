@@ -63,7 +63,7 @@ const HELP_ME_REGEX = /(?:^|\s)+(?:encourage|help)\sme/i;
 const HELP_OTHER_REGEX = /(?:^|\s)+(?:encourage|help)\s<@(.*?)>/i;
 const START_ODDS_REGEX = /^\$odds\s+<@(.*?)>\s*(.*)$/i;
 const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
-const INT_CHECK_REGEX = /(^[0-9]*$)/i;
+const PLAY_ODDS_REGEX = /^[0-9]+$/;
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
@@ -93,7 +93,7 @@ const respond_to_event = event => {
     respondToStartOddsEvent(event);
   } else if (event.text.match(SET_ODDS_REGEX)) {
     respondToSetOddsEvent(event);
-  } else if (event.text.match(INT_CHECK_REGEX) && event.channel_type === "im") {
+  } else if (event.text.match(PLAY_ODDS_REGEX)) {
     respondToOddsPlayEvent(event);
   }
 
@@ -248,41 +248,38 @@ function respondToStartOddsEvent(event) {
 }
 
 function respondToOddsPlayEvent(event) {
+  if (event.channel_type !== "im") {
+    return;
+  }
+
   const userId = event.user;
-  const oddsPlayValue = event.text.match(INT_CHECK_REGEX)[0];
+  const oddsPlayValue = event.text.match(PLAY_ODDS_REGEX)[0];
 
   darbyDb.getOldestPendingOddsRecordForUser(userId, record => {
     if (record === null) {
-      slackAction.sendMessage(
-        "You're not playing odds, you weirdo.",
-        event.channel
-      );
       return;
     }
 
     if (oddsPlayValue > record.odds || oddsPlayValue < 1) {
       slackAction.sendMessage(
-        "You're outside the range. Try again", // should give the actual range.
+        `You're outside the range (1 to ${oddsPlayValue}). Try again`,
         event.channel
       );
     }
 
     if (record.challenger_id === userId) {
-      darbyDb.updateChallengerPlayValue(record.id, oddsPlayValue, _success => {
-        // assume success for now
-        if (record.receiver_play_value) {
+      darbyDb.updateChallengerPlayValue(record.id, oddsPlayValue, success => {
+        if (success && record.receiver_play_value) {
           finishOddsGame(record)
         }
       })
     } else {
-      darbyDb.updateReceiverPlayValue(record.id, oddsPlayValue, _success => {
-        // assume success for now
-        if (record.challenger_play_value) {
+      darbyDb.updateReceiverPlayValue(record.id, oddsPlayValue, success => {
+        if (success && record.challenger_play_value) {
           finishOddsGame(record)
         }
       })
     }
-
 
     const sender = record.challenger_id;
 
@@ -293,6 +290,8 @@ function respondToOddsPlayEvent(event) {
           : "UNABLE TO REJECT ODDS. PLEASE TRY AGAIN LATER.";
         slackAction.sendMessage(message, record.channel_id);
       });
+    }
+  });
 }
 
 function finishOddsGame(record) {
@@ -302,7 +301,6 @@ function finishOddsGame(record) {
         const message = getOddsMatchMessage(record.challenger_id, record.receiver_id, record.odds)
         slackAction.sendMessage(message, record.channel_id);
       }
-      // assume success for now
     })
   } else {
     darbyDb.setOddsGameStatus(record.id, 'mismatch', success => {
@@ -310,7 +308,6 @@ function finishOddsGame(record) {
         const message = getOddsMismatchMessage(record.challenger_id, record.receiver_id, record.odds)
         slackAction.sendMessage(message, record.channel_id);
       }
-      // assume success for now
     })
   }
 }

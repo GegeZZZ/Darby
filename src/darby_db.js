@@ -214,7 +214,7 @@ const getOpenOddsRecordsForUser = (userId, callback) => {
 
 const getOldestPendingOddsRecordForUser = (userId, callback) => {
   darbyDb.query(
-    "SELECT `*` FROM `odds_records` WHERE `status` = ? AND `receiver_id` = ? OR `challenger_id` = ?;",
+    "SELECT `*` FROM `odds_records` WHERE `status` = ? AND (`receiver_id` = ? OR `challenger_id` = ?);",
     ["pending", userId, userId],
     function(err, rows) {
       console.log("this.sql", this.sql);
