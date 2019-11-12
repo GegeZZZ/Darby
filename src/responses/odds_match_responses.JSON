@@ -1,0 +1,7 @@
+{
+  "description": "What Darby will send an odds challenge results in a match",
+  "placeholders": ["[challenger]", "[receiver]", "[odds]"],
+  "responses": [
+    "Great minds think alike - it's a match! <@[challenger]> challenged <@[receiver]> to '[odds]'. Now do it!" 
+  ]
+}
