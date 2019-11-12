@@ -2,6 +2,6 @@
   "description": "What Darby will send an odds challenge results in a mismatch",
   "placeholders": ["[challenger]", "[receiver]", "[odds]"],
   "responses": [
-    "Breathe a sigh of relief, <@[receiver]>. Regarding <@[challenger]> challenging you '[odds]', it's not a match. You're safe."
+    "Breathe a sigh of relief, <@[receiver]>. Regarding <@[challenger]> challenging you to '[odds]', it's not a match. You're safe."
   ]
 }
