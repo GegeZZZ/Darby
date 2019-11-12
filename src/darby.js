@@ -6,9 +6,6 @@ const darbyDb = require("./darby_db");
 const slackAction = require("./slack_action");
 
 // Done only once on startup. There's probably a better way than json (yaml maybe?)
-const NEW_USER_RESPONSES = JSON.parse(
-  fs.readFileSync("src/responses/new_user.JSON")
-);
 const CAPS_RESPONSES = JSON.parse(fs.readFileSync("src/responses/caps.JSON"));
 const POINTS_DOWN_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/points_down.JSON")
@@ -161,7 +158,6 @@ function respondToPointsEvent(event) {
 function addNewUser(userId, valueToAdd, event) {
   darbyDb.addUser(userId, success => {
     if (success) {
-      // slackAction.sendMessage(getNewUserResponse(userId), event.channel);
       addPointsToUser(userId, valueToAdd, event);
     }
   });
@@ -317,10 +313,6 @@ function addPointsToUser(userId, valueToAdd, event) {
       );
     }
   });
-}
-
-function getNewUserResponse(userId) {
-  return getResponseWithReplacement(NEW_USER_RESPONSES, [userId]);
 }
 
 function getUserPointsChangeResponse(userId, points, valueToAdd) {
