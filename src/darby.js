@@ -264,7 +264,7 @@ function respondToOddsPlayEvent(event) {
   }
 
   const userId = event.user;
-  const oddsGuess = event.text.match(PLAY_ODDS_REGEX)[0];
+  const oddsGuess = parseInt(event.text.match(PLAY_ODDS_REGEX)[0]);
 
   darbyDb.getOldestAcceptedOddsRecordForUser(userId, record => {
     if (!record) {
@@ -280,26 +280,28 @@ function respondToOddsPlayEvent(event) {
     }
 
     if (record.challenger_id === userId) {
-      darbyDb.updateChallengerGuess(record.id, oddsGuess, (success, updatedRecord) => {
+      darbyDb.updateChallengerGuess(record.id, oddsGuess, (success) => {
         if (success && record.receiver_guess) {
-          finishOddsGame(updatedRecord)
+          const guessesMatch = oddsGuess === record.receiver_guess
+          finishOddsGame(record, guessesMatch)
         }
       })
     } else {
-      darbyDb.updateReceiverGuess(record.id, oddsGuess, (success, updatedRecord) => {
+      darbyDb.updateReceiverGuess(record.id, oddsGuess, (success) => {
         if (success && record.challenger_guess) {
-          finishOddsGame(updatedRecord)
+          const guessesMatch = oddsGuess === record.challenger_guess
+          finishOddsGame(record, guessesMatch)
         }
       })
     }
   });
 }
 
-function finishOddsGame(record) {
+function finishOddsGame(record, guessesMatch) {
   console.log(`Finished an odds game with record:`)
   console.log(record)
 
-  if (record.receiver_guess === record.challenger_guess) {
+  if (guessesMatch) {
     darbyDb.setGameStatus('done_and_matched', success => {
       if (success) {
         const message = getOddsMatchMessage(record.challenger_id, record.receiver_id, record.challenge)

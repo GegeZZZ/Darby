@@ -288,20 +288,20 @@ const updateChallengerGuess = (recordId, guess, callback) => {
   darbyDb.query(
     "UPDATE `odds_records` SET `challenger_guess` = ? WHERE (`id` = ?);",
     [guess, recordId],
-    function(err, res) {
+    function(err, _res) {
       console.log("this.sql", this.sql);
 
       if (err) {
         console.log(
           `Unable to set the challenger play value for id ${recordID} (error: ${err})`
         );
-        return callback(false, null);
+        return callback(false);
       }
 
       console.log(
         `Successfully set the challenger play value for id ${recordId}`
       );
-      return callback(true, res);
+      return callback(true);
     }
   );
 };
@@ -310,20 +310,20 @@ const updateReceiverGuess = (recordId, guess, callback) => {
   darbyDb.query(
     "UPDATE `odds_records` SET `receiver_guess` = ? WHERE (`id` = ?);",
     [guess, recordId],
-    function(err, res) {
+    function(err, _res) {
       console.log("this.sql", this.sql);
 
       if (err) {
         console.log(
           `Unable to set the receiver play value for id ${recordID} (error: ${err})`
         );
-        return callback(false, null);
+        return callback(false);
       }
 
       console.log(
         `Successfully set the receiver play value for id ${recordId}`
       );
-      return callback(true, res);
+      return callback(true);
     }
   );
 };
