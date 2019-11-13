@@ -26,3 +26,4 @@ You should be able to clone this and run `npm start`. You may need to create an 
 * Add better request authentication
 * Let Darby keep track of bets
 * Add quotes per person that people can add onto 
+* Make Darby give points in threads, not in channel
