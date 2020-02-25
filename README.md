@@ -27,3 +27,4 @@ You should be able to clone this and run `npm start`. You may need to create an 
 * Let Darby keep track of bets
 * Add quotes per person that people can add onto 
 * Make Darby give points in threads, not in channel
+* Make Darby's answers use GPT2
