@@ -1,0 +1,8 @@
+{
+    "description": "What Darby will send when two people match on sidekicks during COVID-19 lockdown",
+    "placeholders": ["[userOne]", "[userTwo]"],
+    "responses": [
+      "Times are tough but let's try to bond, <@[userOne]> & <@[userTwo]>! If you're both in Boston and comfortable with the idea, how about a walk? Otherwise, what about a zoom call tomorrow? :phone:"
+    ]
+  }
+  

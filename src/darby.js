@@ -26,7 +26,7 @@ const ENCOURAGEMENT_MESSAGE_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/encouragement_message.JSON")
 );
 const SIDEKICKS_RESPONSES = JSON.parse(
-  fs.readFileSync("src/responses/sidekicks.JSON")
+  fs.readFileSync("src/responses/corona_virus_sidekicks.JSON")
 );
 const START_ODDS_RESPONSES = JSON.parse(
   fs.readFileSync("src/responses/odds_start_odds.JSON")
