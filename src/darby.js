@@ -66,6 +66,7 @@ const START_ODDS_REGEX = /^\$odds\s+<@(.*?)>\s*(.*)$/i;
 const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 const PLAY_ODDS_REGEX = /^[0-9]+$/;
 const DB_QUOTE_REGEX = /^db quote$/i;
+const SEND_MESSAGE_REGEX = /send\sthis\sto\s<#([^\|]*)\|[^>]*>/i;
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
@@ -76,6 +77,9 @@ const respond_to_event = event => {
   // 1. A message that wants to give or take away points
   // 2. A command message
   // 3. An uppercase message (or randomly 2 % of the time)
+  if (!event.text) {
+    return
+  }
 
   if (event.text.match(GIVE_POINTS_REGEX)) {
     respondToPointsEvent(event);
