@@ -1,17 +1,20 @@
+'use strict'
+
 const slackAction = require("./slack_action");
 
-const PROMPTS_AND_RESPONSES = {
+const PROMPT_TO_RESPONSES = {
     "hey darby, how did it all start?": "I will post a video here."
 }
 
 function respondToEndOfYearVideo(text, channel) {
-    const lowerText = text.toLowerCase()
+    const cleanedText = text.replace(/\s/g, ' ').toLowerCase()
 
-    if (lowerText in PROMPTS_AND_RESPONSES) {
-        slackAction.sendMessage(PROMPTS_AND_RESPONSES[lowerText], channel)
+    if (cleanedText in PROMPT_TO_RESPONSES) {
+        slackAction.sendMessage(PROMPT_TO_RESPONSES[cleanedText], channel)
     }
 }
 
 module.exports = {
     respondToEndOfYearVideo: respondToEndOfYearVideo,
 };
+

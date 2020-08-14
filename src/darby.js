@@ -86,6 +86,7 @@ const respond_to_event = event => {
   // The end of year video is a special (hacked together) exception
   // so that Andras + Gege can make a video using Darby
   if(CHANNELS_FOR_END_OF_YEAR_VIDEO.includes(event.channel)){
+    console.log("We are in an end of year video channel")
     endOfYearVideo.respondToEndOfYearVideo(event.text, event.channel)
   }
 
