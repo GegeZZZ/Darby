@@ -4,6 +4,7 @@ const _ = require("lodash");
 const fs = require("fs");
 const darbyDb = require("./darby_db");
 const slackAction = require("./slack_action");
+const endOfYearVideo = require("./end_of_year_video");
 
 // Done only once on startup. There's probably a better way than json (yaml maybe?)
 const CAPS_RESPONSES = JSON.parse(fs.readFileSync("src/responses/caps.JSON"));
@@ -67,6 +68,7 @@ const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 const PLAY_ODDS_REGEX = /^[0-9]+$/;
 const DB_QUOTE_REGEX = /^db quote$/i;
 const SEND_MESSAGE_REGEX = /send\sthis\sto\s<#([^\|]*)\|[^>]*>/i;
+const CHANNELS_FOR_END_OF_YEAR_VIDEO = ['DN0MRV81E'] 
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
@@ -79,6 +81,12 @@ const respond_to_event = event => {
   // 3. An uppercase message (or randomly 2 % of the time)
   if (!event.text) {
     return
+  }
+
+  // The end of year video is a special (hacked together) exception
+  // so that Andras + Gege can make a video using Darby
+  if(CHANNELS_FOR_END_OF_YEAR_VIDEO.includes(event.channel)){
+    endOfYearVideo.respondToEndOfYearVideo(event.text, event.channel)
   }
 
   if (event.text.match(GIVE_POINTS_REGEX)) {
