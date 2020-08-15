@@ -30,7 +30,7 @@ function respondToEndOfYearVideo(text, channel) {
     const cleanedText = text.replace(/\s/g, ' ').toLowerCase()
 
     if (cleanedText in PROMPT_TO_RESPONSES) {
-        slackAction.sendMessage(PROMPT_TO_RESPONSES[cleanedText], channel)
+        slackAction.sendMessage(PROMPT_TO_RESPONSES[cleanedText], channel, false)
     }
 }
 

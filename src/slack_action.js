@@ -3,12 +3,12 @@
 const slack = require("slack");
 const config = require("./config");
 
-function sendMessage(text, channel) {
+function sendMessage(text, channel, upperCase = true) {
   slack.chat.postMessage(
     {
       token: config("BOT_USER_TOKEN"),
       channel: channel,
-      text: text.toUpperCase()
+      text: upperCase ? text.toUpperCase() : text
     },
     err => {
       if (err) throw err;
