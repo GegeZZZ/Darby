@@ -3,11 +3,11 @@
 const slackAction = require("./slack_action");
 
 const PROMPT_TO_RESPONSES = {
-    "hey darby, how did it all start?":                             "I will post a video here.",
+    "hey darby, how did it all start?":                             "TODO",
     "nice view!":                                                   "Yeah - Maine was awesome!",
     "btw darby, what’s your favorite food?":                        "Data :stuck_out_tongue:",
-    "seriously, what actual food do you like?":                     "I will post a food video here.",
-    "yummy... darby what else did you do all day other than eat?":  "I will post a work video here.",
+    "seriously, what actual food do you like?":                     "TODO",
+    "yummy... darby what else did you do all day other than eat?":  "TODO",
     "it looks like your days weren’t sparse at all...":             "Yes! I was very busy. Class, homework, dates, friends... Plus I will post a video",
     "darby... :man-facepalming:":                                   "Sorry, wrong file!",
     "darby, i heard you are graduating today!":                     "Yes. And can I tell you a secret?",
