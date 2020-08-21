@@ -68,7 +68,7 @@ const SET_ODDS_REGEX = /^\$odds\s*([0-9]*)$/i;
 const PLAY_ODDS_REGEX = /^[0-9]+$/;
 const DB_QUOTE_REGEX = /^db quote$/i;
 const SEND_MESSAGE_REGEX = /send\sthis\sto\s<#([^\|]*)\|[^>]*>/i;
-const CHANNELS_FOR_END_OF_YEAR_VIDEO = ['DN0MRV81E', 'GEGE_ADD_YOURS_HERE'] 
+const CHANNELS_FOR_END_OF_YEAR_VIDEO = ['DN0MRV81E', 'DN2GV70UE'] 
 
 const respond_to_event = event => {
   console.log(`Darby sees message: ${event.text}`);
